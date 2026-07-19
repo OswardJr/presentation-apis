@@ -6,21 +6,118 @@
     "duration_minutes": 20,
     "generated_at": "2026-07-19T06:05:00Z",
     "docs_home": "Orbit",
-    "notes": "Snapshot estático para la presentación. Actualizar con npm run refresh:ahrefs. IP/país se enriquecen desde logs de Orbit cuando existan."
+    "notes": "Snapshot estático para la presentación. Caso Semrush = informe interno 13 jul 2026 (Robert Virona / SeoLab). Actualizar Ahrefs con npm run refresh:ahrefs."
   },
   "trigger_case": {
     "provider": "semrush",
     "name": "Semrush API",
-    "severity": "Caso detonante de esta exposición",
-    "summary": "El paquete prepago de units se agotó en aproximadamente 3 días. Semrush no resetea mensualmente: si el saldo llega a 0, las herramientas fallan hasta recargar.",
+    "headline": "Caso detonante · informe 13 jul 2026",
+    "summary": "El saldo pasó de 36.370 a 0 unidades en tres días. Solo 460 units (1,3%) están 100% explicadas en nuestros logs. Las otras 35.900 (98,7%) no dejaron rastro en sistemas de la agencia.",
     "billing_model": "prepago (paquete, sin reset mensual)",
     "orbit_module": "/leaders/semrush-api-usage",
     "orbit_tables": ["semrush_api_call_log", "semrush_usage_snapshots"],
     "orbit_gateway": "semrush-gateway",
+    "report": {
+      "date": "2026-07-13",
+      "prepared_for": "Robert Virona · SeoLab Agency",
+      "timezone": "America/Bogota",
+      "balance_start": 36370,
+      "balance_end": 0,
+      "explained_units": 460,
+      "unexplained_units": 35900,
+      "unexplained_pct": 98.7,
+      "drops": [
+        {
+          "label": "Noche vie → sáb",
+          "from": 36000,
+          "to": 20340,
+          "delta": -15660,
+          "window": "~13 h",
+          "from_at": "vie 10 jul · 4:56 p.m.",
+          "to_at": "sáb 11 jul · 5:58 a.m.",
+          "logged_calls": false
+        },
+        {
+          "label": "Fin de semana → lun",
+          "from": 20340,
+          "to": 100,
+          "delta": -20240,
+          "window": "~51 h",
+          "from_at": "sáb 11 jul · 5:58 a.m.",
+          "to_at": "lun 13 jul · 9:25 a.m.",
+          "logged_calls": false
+        }
+      ],
+      "timeline": [
+        {
+          "when": "vie 10 jul · mañana",
+          "balance": 36370,
+          "event": "Verificación de la key al conectarla a la agencia",
+          "source": "Registro interno",
+          "explained": true
+        },
+        {
+          "when": "vie 10 jul · 1:51–4:44 p.m.",
+          "balance": 36000,
+          "delta": -360,
+          "event": "11 llamadas de prueba al activar Semrush como 2ª fuente",
+          "source": "Registro interno (antes/después)",
+          "explained": true
+        },
+        {
+          "when": "vie 10 jul · 4:56 p.m.",
+          "balance": 36000,
+          "event": "Panel interno — solo lectura de saldo (0 costo)",
+          "source": "Vista de panel",
+          "explained": true
+        },
+        {
+          "when": "sáb 11 jul · 5:58 a.m.",
+          "balance": 20340,
+          "delta": -15660,
+          "event": "Ya faltaban 15.660 units sin llamadas nuestras registradas",
+          "source": "Vista de panel",
+          "explained": false
+        },
+        {
+          "when": "lun 13 jul · 9:25 a.m.",
+          "balance": 100,
+          "delta": -20240,
+          "event": "Otras 20.240 caídas en el fin de semana, sin log interno",
+          "source": "Consulta propia",
+          "explained": false
+        },
+        {
+          "when": "lun 13 jul · ~9:26 a.m.",
+          "balance": 0,
+          "delta": -100,
+          "event": "Verificación directa Position Tracking (fuera del proxy)",
+          "source": "Llamada directa a Semrush",
+          "explained": true
+        }
+      ],
+      "ruled_out": [
+        "Cron propio activo tocando Semrush: ninguno",
+        "Tareas programadas de la agencia: ninguna relacionada",
+        "Flujos e integraciones internas: ninguno referencia Semrush"
+      ],
+      "hypothesis": {
+        "status": "no confirmada",
+        "title": "API Position Tracking de Semrush",
+        "detail": "100 units por llamada de gestión y 100 por keyword agregada. Una campaña de 150–200 keywords ≈ 15.000–20.000 units — calza con cada golpe.",
+        "why_invisible": "Llamadas directas a Semrush (terminal, script, consola) sin pasar por el proxy son invisibles para nuestro monitoreo."
+      },
+      "next_steps": [
+        "Revisar Perfil → actividad de API en semrush.com",
+        "Confirmar si alguien más tiene o usó esta key vie–lun",
+        "Soporte Semrush con saldos: 36.000 / 20.340 / 100"
+      ]
+    },
     "lessons": [
-      "Sin monitoreo en tiempo real, un paquete prepago puede evaporarse en días",
-      "Hay que registrar balance antes/después de cada llamada (consumo real, no estimado)",
-      "Cache y límites por herramienta son obligatorios en APIs de pago"
+      "98,7% del gasto fue invisible: lo que no pasa por el proxy no existe para nosotros",
+      "Dos golpes grandes (−15.660 y −20.240), no un goteo — patrón de lote",
+      "Hay que cerrar quién más tiene la key y exigir desglose a Semrush",
+      "Ahrefs seguía saludable: la fuente principal no se cayó, el riesgo de modelo sí"
     ]
   },
   "apis": [
@@ -103,13 +200,15 @@
       "billing_model": "prepago sin reset mensual",
       "controlled_by": "company",
       "orbit_module": "/leaders/semrush-api-usage",
-      "why_monitored": "Segunda fuente SEO. Caso real: paquete agotado en ~3 días.",
+      "why_monitored": "Segunda fuente SEO. Incidente 10–13 jul 2026: 36.370 → 0; 98,7% sin rastro en logs de agencia.",
       "api": {
         "source": "orbit_semrush_gateway",
-        "note": "Balance vivo vía countapiunits (0 costo). Historial en semrush_api_call_log."
+        "units_balance": 0,
+        "note": "Balance vivo vía countapiunits (0 costo). Historial en semrush_api_call_log. Crítico: 0 units."
       },
       "alerts": [
-        { "level": "critical", "message": "Sin saldo = fallan herramientas con fuente Semrush hasta recargar paquete." }
+        { "level": "critical", "message": "0 units — ninguna llamada posible hasta recargar paquete." },
+        { "level": "warning", "message": "35.900 units sin registro interno; hipótesis Position Tracking no confirmada." }
       ]
     },
     {
@@ -158,18 +257,24 @@
     },
     "third_party_tools": {
       "owner_discussion": "Esteban",
-      "topics": ["IDEs con MCP", "extensiones que llaman APIs con keys compartidas", "entornos locales vs producción"]
+      "topics": [
+        "IDEs con MCP",
+        "extensiones que llaman APIs con keys compartidas",
+        "entornos locales vs producción",
+        "llamadas directas a Semrush/Ahrefs fuera del proxy (invisibles)"
+      ]
     },
     "monitoring": {
       "owner": "Osward",
       "channels": ["Orbit → Leaders → monitores Ahrefs/Semrush", "snapshots diarios", "logs por endpoint"],
       "thresholds_ahrefs_api_pct": { "moderate": 50, "warning": 75, "critical": 90 },
       "unidentified_spend_protocol": [
-        "Detectar pico (snapshot o alerta)",
-        "Revisar call log por endpoint/label/source",
-        "Aislar key sospechosa (rotar o limitar)",
-        "Comunicar a gestión",
-        "Documentar en Orbit y ajustar límites"
+        "Detectar pico (snapshot countapiunits o alerta)",
+        "Revisar call log Orbit: si el saldo cayó y el log está vacío → gasto fuera del proxy",
+        "Inventario de quién tiene la key (agencia, contratistas, IDEs, consolas)",
+        "Aislar: rotar key + límite; pedir desglose a Semrush/Ahrefs",
+        "Comunicar a gestión con cifras exactas de extremos",
+        "Documentar en Orbit y ajustar política de keys compartidas"
       ]
     }
   }

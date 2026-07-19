@@ -31,6 +31,7 @@ export interface ApiBlock {
     units_usage_other_keys_or_ui?: number;
     pct_this_key_of_workspace?: number;
     units_limit_api_key?: number | null;
+    units_balance?: number | null;
     api_key_expiration_date?: string;
     endpoint?: string;
     note?: string;
@@ -80,6 +81,42 @@ export interface UsageData {
     orbit_tables: string[];
     orbit_gateway: string;
     lessons: string[];
+    report?: {
+      date: string;
+      prepared_for: string;
+      timezone: string;
+      balance_start: number;
+      balance_end: number;
+      explained_units: number;
+      unexplained_units: number;
+      unexplained_pct: number;
+      drops: {
+        label: string;
+        from: number;
+        to: number;
+        delta: number;
+        window: string;
+        from_at: string;
+        to_at: string;
+        logged_calls: boolean;
+      }[];
+      timeline: {
+        when: string;
+        balance: number;
+        delta?: number;
+        event: string;
+        source: string;
+        explained: boolean;
+      }[];
+      ruled_out: string[];
+      hypothesis: {
+        status: string;
+        title: string;
+        detail: string;
+        why_invisible: string;
+      };
+      next_steps: string[];
+    };
   };
   apis: ApiBlock[];
   policy: {

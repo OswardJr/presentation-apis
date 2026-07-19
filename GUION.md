@@ -3,202 +3,149 @@
 **Presenta:** Osward  
 **Gestión:** Sebastian Castaño  
 **Docs:** todo en Orbit  
-**Deck:** esta web (Vercel) · datos en `/data/apis-usage.json`
+**Deck:** esta web (Vercel) · datos en `/data/apis-usage.json`  
+**Caso Semrush:** informe interno 13 jul 2026 · preparado para Robert Virona / SeoLab
 
 ---
 
 ## Antes de empezar (2 min prep)
 
 - Abre la presentación en pantalla completa.
-- Ten Orbit abierto en otra pestaña: monitores Ahrefs y Semrush (Leaders).
-- Números clave a memorizar (snapshot 19 jul 2026):
-  - **Ahrefs API:** 86,251 / 400,000 → **~21.6%**
-  - **Esta API key (Orbit):** 46,373 → **~54%** del consumo del workspace
-  - **Resto (UI / otras keys / MCP):** ~39,878 → **~46%**
-  - **Brand Radar:** ~7,200 / 300 (alerta fuerte)
-  - **Semrush:** caso detonante — paquete prepago **agotado en ~3 días**
+- Ten Orbit abierto: monitores Ahrefs y Semrush (Leaders).
+- Números clave:
 
-Si actualizaste datos: `npm run refresh:ahrefs` (key solo en `.env.local`).
+### Semrush (informe 13 jul — horas Bogotá)
+| Extremo | Saldo |
+|---|---|
+| Vie mañana | ~36.370 |
+| Vie 4:56 p.m. (fin pruebas) | 36.000 |
+| Sáb 5:58 a.m. | 20.340 (−15.660 sin log) |
+| Lun 9:25 a.m. | 100 (−20.240 sin log) |
+| Lun ~9:26 a.m. | 0 (−100 verificación directa) |
+
+- **Explicadas:** 460 (360 pruebas + 100 verificación) = **1,3%**
+- **Sin rastro interno:** 35.900 = **98,7%**
+- Hipótesis (no confirmada): Position Tracking · 100/gestión + 100/keyword
+
+### Ahrefs (snapshot deck)
+- API: **86.251 / 400.000** (~21.6%)
+- Esta key Orbit: **46.373** (~54% del workspace)
+- Brand Radar UI: ~7.200 / 300 (alerta)
 
 ---
 
 ## 1. Portada (30–45 s)
 
-> “Hoy no venimos a hablar de Google gratis. Venimos a poner reglas sobre las APIs que sí nos cuestan dinero — y a evitar que se nos vuelva a acabar un cupo sin darnos cuenta.”
-
-Menciona: 20 minutos, docs en Orbit, tú operas, Sebastian gestiona.
+> “Hoy no venimos a hablar de Google gratis. Venimos a poner reglas sobre las APIs que sí nos cuestan — y a evitar que se nos vuelva a acabar un cupo sin darnos cuenta, como pasó con Semrush.”
 
 ---
 
-## 2. Por qué estamos aquí — Semrush (2–2.5 min)
+## 2. Caso Semrush — cifras (2 min)
 
-**Mensaje:** esto ya pasó.
+> “El informe del 13 de julio es claro: el saldo pasó de treinta y seis mil trescientos setenta a cero en tres días. De esa caída, solo cuatrocientas sesenta units están 100% explicadas en nuestros logs. El 98,7% — treinta y cinco mil novecientas — no dejó ningún rastro en los sistemas de la agencia.”
 
-> “El detonante es Semrush. Modelo prepago: compras units, no hay reset mensual como Ahrefs. Se nos acabó el paquete en unos tres días. Cuando el saldo llega a cero, las herramientas con fuente Semrush fallan hasta recargar.”
-
-Tres aprendizajes (dígalos tal cual):
-
-1. Sin monitoreo en tiempo real, un prepago se evapora.
-2. Hay que medir consumo real (balance antes/después), no estimaciones a ciegas.
-3. Cache + límites por herramienta son obligatorios.
-
-Cierra el slide: “Por eso ya existe el módulo en Orbit: `/leaders/semrush-api-usage`.”
+Enfatiza: no es estimación; cada punto es lectura real de `countapiunits`.
 
 ---
 
-## 3. Agenda — 8 puntos (45 s)
+## 3. Dos golpes (1.5–2 min)
 
-No leas la lista entera. Di:
+> “No fue un goteo. Fueron dos caídas concretas: quince mil seiscientas sesenta en unas trece horas entre el viernes noche y el sábado; y veinte mil doscientas cuarenta en el resto del fin de semana. En ambos tramos: cero llamadas nuestras registradas.”
 
-> “Son ocho puntos accionables: costo, fuentes de datos, excepciones, MCP, qué controlamos, tools de terceros, mi rol, y el protocolo de alertas. Ahrefs es el ejemplo vivo; el marco aplica al resto.”
+Explicado:
+- Viernes: 11 pruebas al activar Semrush como 2ª fuente → **360** units (sí en log).
+- Lunes: verificación directa Position Tracking → **100** units (fuera del proxy; por eso tampoco quedó en el log de plataforma).
 
----
-
-## 4. Ahrefs ahora — números (2 min)
-
-> “Ahrefs hoy está holgado: poco más del 21% del cupo de API del mes. Eso no significa que podamos relajarnos — significa que todavía podemos instalar el hábito antes del próximo susto.”
-
-Destaca el desglose:
-
-> “De lo consumido en el workspace, esta key —la del ecosistema Orbit— se lleva cerca del 54%. El otro 46% es UI, otras keys o MCP. Esa separación es importante: si hay un pico, primero preguntamos ¿fue Orbit o fue otra cosa?”
-
-Menciona: plan Standard 2022, reset 12 ago 2026, pay-as-you-go **deshabilitado** (bien).
+> “Eso último es clave: yo mismo comprobé que una llamada directa a Semrush es invisible para nuestro monitoreo.”
 
 ---
 
-## 5. Quién consume + panel UI (1.5 min)
+## 4. Hipótesis + descartes (1.5–2 min)
 
-Cruza API con panel:
+Di con cuidado — **no es confirmación**:
 
-- Créditos UI SeoLab 41/600 — tranquilidad relativa en interfaz.
-- Rank Tracker y Site Audit OK.
-- **Brand Radar** — pásalo con tono serio:
+> “La hipótesis de trabajo más fuerte es la API de Position Tracking: cien units por gestión y cien por keyword. Una campaña de 150 a 200 keywords consume del orden de 15 a 20 mil de un saque — el tamaño de cada golpe. Confirmamos que la key sí tiene acceso a esa API.”
 
-> “Aquí hay una bandera roja: Brand Radar está órdenes de magnitud por encima del plan base. No es el mismo cupo que la API, pero es señal de uso descontrolado o mal dimensionado. Hay que revisar quién lo dispara.”
+Descartado del lado agencia (recítalo):
+- Sin cron propio Semrush
+- Sin tareas programadas relacionadas
+- Sin flujos/integraciones que llamen Semrush
 
-Sobre IP/país:
-
-> “Ahrefs no nos da geo en el endpoint de límites. Lo vamos a enriquecer desde logs de Orbit. El JSON de esta presentación ya está preparado para cargar samples de IP y país.”
-
----
-
-## 6. Reducción de costos (2 min)
-
-No sermonees. Dale reglas cortas:
-
-1. Cache primero  
-2. Targets de prueba en desarrollo  
-3. Campos mínimos (mín. 50 units/request en Ahrefs)  
-4. Cap por API key  
-5. Pay-as-you-go off  
-6. UI ≠ API — se miden aparte  
-
-> “Reducir costo no es ‘usar menos Ahrefs’. Es dejar de pagar por queries que no aportan decisión.”
+Siguiente (pide acción al room):
+1. Actividad de API en semrush.com  
+2. ¿Quién más tiene la key?  
+3. Soporte Semrush con saldos 36.000 / 20.340 / 100  
 
 ---
 
-## 7. Fuentes de datos en Orbit (1 min)
+## 5. Aprendizajes (1 min)
 
-> “La fuente de verdad del consumo es Orbit, no capturas sueltas de pantalla. Leaders ya tiene monitores para Ahrefs y Semrush. OpenRouter y generación de contenido entran después en el mismo molde. GSC y GA4 quedan fuera del foco de costo.”
-
----
-
-## 8. Excepciones (1 min)
-
-> “Sí habrá excepciones — auditorías grandes, demos, backfills — pero con dueño. Autorizan gestión y operación: Sebastian + yo. Proceso: solicitud en Orbit, justificación, ventana temporal, revisión post-uso.”
+> “Cuatro consecuencias para la política: uno, lo que no pasa por el proxy no existe para nosotros. Dos, el patrón fue de lote, no de goteo. Tres, inventario de keys ya. Cuatro, Ahrefs estaba bien — el riesgo es el modelo, no solo Semrush.”
 
 ---
 
-## 9. MCP (1–1.5 min)
+## 6. Agenda — 8 puntos (45 s)
 
-> “MCP es potente y peligroso al mismo tiempo. Una sesión de IDE mal configurada puede parecer ‘productividad’ y ser un burn silencioso.”
-
-Regla de oro:
-
-> “Preferir cache / datos de Orbit; en desarrollo, targets de prueba; nunca barridos masivos sin límite.”
-
-Docs del uso correcto: Orbit.
+> “Con eso en la mesa, los ocho puntos: costo, fuentes, excepciones, MCP, qué controlamos, tools de terceros, mi rol, protocolo de gasto fantasma.”
 
 ---
 
-## 10. Qué controla la empresa (1 min)
+## 7. Ahrefs ahora (2 min)
 
-Lista corta: Ahrefs (activo), Semrush (en vigilancia por el incidente), OpenRouter/contenido (siguiente).  
-Fuera: GSC/GA4.
+> “Ahrefs hoy está holgado: poco más del 21% del cupo API. El riesgo no es el porcentaje actual: es un pico sin dueño, como Semrush.”
 
-> “Si la key o la cuenta es de la empresa, el gasto es de la empresa — aunque lo dispare un plugin.”
-
----
-
-## 11. Terceros / Esteban (1 min)
-
-> “Con Esteban hay que alinear IDEs, extensiones y entornos que puedan llamar APIs con keys compartidas. No hay zona gris porque ‘es solo mi Cursor’.”
+Desglose: ~54% esta key Orbit / ~46% otras keys·UI·MCP.  
+Pay-as-you-go off. Brand Radar UI fuera de control (~7.200/300).
 
 ---
 
-## 12. Tu rol (1 min)
+## 8–13. Política (puntos 01–08) — ~8 min
 
-Di en primera persona:
+Misma estructura de la deck. Frases ancla:
 
-> “Mi rol: vigilar monitores, snapshots, investigar picos, proponer límites o rotar keys, y reportar a Sebastian con datos — no con sensaciones.”
-
----
-
-## 13. Protocolo de gasto fantasma (1.5–2 min)
-
-Umbrales API Ahrefs: 50% moderado · 75% atención · 90% crítico.  
-Hoy ~22% → verde, pero el protocolo existe para cuando no lo sea.
-
-Pasos (recítalos):
-
-1. Detectar pico  
-2. Call log por endpoint/label/source  
-3. Aislar key (límite o rotación)  
-4. Avisar a gestión  
-5. Documentar en Orbit y ajustar  
-
-> “El objetivo no es castigar: es que un gasto raro no dure tres días otra vez.”
+**Costo:** “Reducir costo = dejar de pagar queries que no aportan decisión.”  
+**Fuentes:** “Orbit es la fuente de verdad; GSC/GA4 fuera de foco de costo.”  
+**Excepciones:** “Sí, con dueño: Sebastian + yo; ventana temporal.”  
+**MCP:** “Útil, no voraz. Preferir cache Orbit; nunca barridos masivos.”  
+**Control:** “Si la key es de la empresa, el gasto es de la empresa — aunque lo dispare un plugin o una terminal.”  
+**Terceros / Esteban:** “IDEs y llamadas directas entran al mismo régimen.”  
+**Rol:** “Vigilo, investigo picos, propongo rotar keys, reporto con cifras.”  
+**Protocolo:** “Si el saldo cae y el log está vacío → gasto fuera del proxy. Inventario de keys, aislar, pedir desglose al vendor.”
 
 ---
 
-## 14. Roadmap + cierre (1 min)
+## 14. Cierre (45 s)
 
-> “Esta deck está pensada para ir cargando más APIs en el JSON. Hoy Ahrefs con datos vivos; Semrush como caso; después OpenRouter y geo desde logs.”
-
-Cierre fuerte:
-
-> “Controlar APIs es proteger presupuesto y continuidad del SEO. Semrush nos avisó. Ahrefs todavía tiene margen. Usémoslo para dejar el sistema puesto.”
+> “Semrush: 36.370 a cero, y casi todo invisible. Ahrefs todavía tiene margen. Usémoslo para dejar el sistema puesto: todo por proxy, keys inventariadas, Orbit como verdad.”
 
 Abre a preguntas.
 
 ---
 
-## Preguntas probables (respuestas cortas)
+## Preguntas probables
 
-**¿Por qué no cortamos Ahrefs ya?**  
-Porque está al ~22% y es la fuente SEO principal. El movimiento correcto es gobernanza, no apagar.
+**¿Fue culpa de la agencia?**  
+No hay evidencia en nuestros sistemas. Descartamos automatizaciones internas. La causa real solo la ve Semrush (o quien usó la key fuera).
 
-**¿Quién puede pedir más cupo?**  
-Gestión. Pay-as-you-go sigue off a propósito.
+**¿Confirmado Position Tracking?**  
+No. Hipótesis de trabajo: calza en tamaño y en silencio del log.
 
-**¿Y si MCP necesita datos ya?**  
-Que pase por Orbit/cache o por una excepción temporal con límite.
+**¿Por qué gastaste las últimas 100?**  
+Verificación de acceso a Position Tracking (pedido Categorías por estado). Lectura de gestión que sí cobra 100. Menor frente a 35.900 ya perdidas; documentado.
 
-**¿Dónde queda documentado?**  
-Orbit. Esta web es la exposición; Orbit es la norma operativa.
+**¿Ahrefs está en riesgo?**  
+Hoy no por saldo. Sí por el mismo riesgo estructural: keys compartidas + llamadas fuera de proxy.
 
-**¿Cómo actualizo los números de la deck?**  
-`AHREFS_API_KEY` en `.env.local` → `npm run refresh:ahrefs` → redeploy. La key nunca va al repo.
+**¿Dónde documentamos?**  
+Orbit. Esta web es la exposición.
 
 ---
 
 ## Timing sugerido
 
-| Bloque        | Minutos |
-|---------------|---------|
-| Portada + por qué (Semrush) | 3.5 |
-| Agenda + Ahrefs números     | 4.5 |
-| Costos + fuentes + excepciones | 4 |
-| MCP + control + terceros    | 3.5 |
-| Rol + protocolo + cierre    | 4 |
-| Preguntas                   | resto |
+| Bloque | Min |
+|---|---|
+| Portada + caso Semrush (cifras, golpes, hipótesis, aprendizajes) | 7 |
+| Agenda + Ahrefs | 3 |
+| Política 8 puntos | 7 |
+| Cierre + preguntas | resto |

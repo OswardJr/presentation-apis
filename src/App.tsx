@@ -154,37 +154,144 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
     },
     {
       id: 'why',
-      title: 'Por qué estamos aquí',
+      title: 'Caso Semrush',
       node: (
         <section className="slide">
-          <span className="kicker">Contexto</span>
+          <span className="kicker">{data.trigger_case.headline}</span>
           <h2>
-            No es teoría: <span className="neon-rose">ya nos pasó</span>
+            <span className="neon-rose">{fmt(data.trigger_case.report?.balance_start)}</span>
+            {' → '}
+            <span className="neon-rose">0</span>
+            <span style={{ color: 'var(--muted)', fontSize: '0.45em', fontWeight: 500 }}>
+              {' '}
+              en 3 días
+            </span>
+          </h2>
+          <div className="grid-3">
+            <div className="panel stat">
+              <span className="label">Explicadas (logs agencia)</span>
+              <span className="value neon-lime">
+                {fmt(data.trigger_case.report?.explained_units)}
+              </span>
+              <span className="hint">1,3% · pruebas vie + verificación lun</span>
+            </div>
+            <div className="panel stat">
+              <span className="label">Sin rastro interno</span>
+              <span className="value neon-rose">
+                {fmt(data.trigger_case.report?.unexplained_units)}
+              </span>
+              <span className="hint">
+                {data.trigger_case.report?.unexplained_pct}% del total perdido
+              </span>
+            </div>
+            <div className="panel stack">
+              <h3>Informe</h3>
+              <p className="lead" style={{ fontSize: '0.92rem' }}>
+                {data.trigger_case.report?.prepared_for}
+              </p>
+              <div className="chips">
+                <span className="chip danger">Prepago · sin reset</span>
+                <span className="chip">Horas Bogotá</span>
+              </div>
+            </div>
+          </div>
+          <div className="alert critical">{data.trigger_case.summary}</div>
+        </section>
+      ),
+    },
+    {
+      id: 'semrush-drops',
+      title: 'Dos golpes',
+      node: (
+        <section className="slide">
+          <span className="kicker">Cronología · lecturas reales countapiunits</span>
+          <h2>
+            Dos caídas <span className="neon-rose">sin llamadas registradas</span>
+          </h2>
+          <div className="grid-2">
+            {(data.trigger_case.report?.drops ?? []).map((d) => (
+              <div className="panel stack" key={d.label}>
+                <div className="chips">
+                  <span className="chip danger">{d.label}</span>
+                  <span className="chip">{d.window}</span>
+                </div>
+                <div className="big-number neon-rose">{fmt(d.delta)}</div>
+                <p className="lead" style={{ fontSize: '0.95rem' }}>
+                  {fmt(d.from)} → {fmt(d.to)}
+                </p>
+                <span className="mono" style={{ color: 'var(--dim)', fontSize: '0.78rem' }}>
+                  {d.from_at} → {d.to_at}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="alert warning">
+            Tramo explicado: 360 (pruebas) + 100 (verificación directa lun) = 460. El resto solo
+            conocemos los extremos — no qué pasó adentro.
+          </div>
+        </section>
+      ),
+    },
+    {
+      id: 'semrush-hypothesis',
+      title: 'Hipótesis Semrush',
+      node: (
+        <section className="slide">
+          <span className="kicker">Hipótesis de trabajo · no confirmada</span>
+          <h2>
+            {data.trigger_case.report?.hypothesis.title ?? 'Position Tracking'}
           </h2>
           <div className="grid-2">
             <div className="panel stack">
-              <h3>El detonante</h3>
-              <p className="lead" style={{ fontSize: '1.05rem' }}>
-                {data.trigger_case.summary}
+              <h3>Por qué encaja</h3>
+              <p className="lead" style={{ fontSize: '0.98rem' }}>
+                {data.trigger_case.report?.hypothesis.detail}
               </p>
-              <div className="chips">
-                <span className="chip danger">{data.trigger_case.name}</span>
-                <span className="chip">{data.trigger_case.billing_model}</span>
-                <span className="chip hot">Módulo Orbit listo</span>
+              <div className="alert critical">
+                {data.trigger_case.report?.hypothesis.why_invisible}
               </div>
             </div>
-            <div className="panel">
-              <h3>Lo que aprendimos</h3>
+            <div className="panel stack">
+              <h3>Descartado (lado agencia)</h3>
               <ul className="list">
-                {data.trigger_case.lessons.map((l, i) => (
-                  <li key={l}>
+                {(data.trigger_case.report?.ruled_out ?? []).map((x, i) => (
+                  <li key={x}>
                     <span className="n">0{i + 1}</span>
-                    <span>{l}</span>
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+              <h3 style={{ marginTop: '0.5rem' }}>Siguiente</h3>
+              <ul className="list">
+                {(data.trigger_case.report?.next_steps ?? []).map((x, i) => (
+                  <li key={x}>
+                    <span className="n">0{i + 1}</span>
+                    <span>{x}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
+        </section>
+      ),
+    },
+    {
+      id: 'lessons',
+      title: 'Aprendizajes',
+      node: (
+        <section className="slide">
+          <span className="kicker">De Semrush a la política</span>
+          <h2>
+            Lo que esto <span className="neon">obliga</span> a cambiar
+          </h2>
+          <ul className="list" style={{ flex: 1, fontSize: '1.05rem' }}>
+            {data.trigger_case.lessons.map((l, i) => (
+              <li key={l}>
+                <span className="n">0{i + 1}</span>
+                <span>{l}</span>
+              </li>
+            ))}
+          </ul>
         </section>
       ),
     },
@@ -710,8 +817,9 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
             Controlar APIs es <span className="neon">proteger presupuesto</span>
           </h1>
           <p className="lead">
-            Semrush se acabó en días. Ahrefs todavía tiene margen — usémoslo para instalar el
-            hábito: Orbit como fuente de verdad, límites claros, excepciones con dueño.
+            Semrush: 36.370 → 0, y el 98,7% fue invisible para nuestros logs. Ahrefs todavía tiene
+            margen — usémoslo para instalar el hábito: todo por proxy, inventario de keys, Orbit
+            como fuente de verdad.
           </p>
           <div className="hero-meta">
             <span>
