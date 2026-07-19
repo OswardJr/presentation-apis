@@ -1,0 +1,1227 @@
+{
+  "meta": {
+    "generated_at": "2026-07-19T07:00:14.619Z",
+    "source_files": [
+      "2026-07-11_2026-07-19_2026-07-19_02-56-59.csv",
+      "2026-06-11_2026-07-11_2026-07-19_02-57-54.csv"
+    ],
+    "users": {
+      "accesos": {
+        "token": "Accesos SeoLab",
+        "email": "accesos@seolabagency.com",
+        "role": "Miembro",
+        "channel": "MCP (Claude / OpenAI / Codex)"
+      },
+      "esteban": {
+        "token": "Online Enterprises LLC",
+        "email": "info@seolabagency.com",
+        "role": "Propietario",
+        "channel": "Orbit proxy · Supabase Edge · monitores"
+      }
+    }
+  },
+  "attack": {
+    "title": "El CSV identifica al quemador",
+    "bullets": [
+      "Ciclo anterior: Accesos SeoLab (MCP) gastó 244.492 units (60.1% del mes) — OpenAI MCP lideró.",
+      "Ciclo actual (8 días): Orbit/Esteban 46.373 vs MCP/Accesos 39.878.",
+      "Llamadas MCP matching-terms de hasta 13.250 units c/u (13 jul: dos = 26.500).",
+      "MCP no deja IP. Orbit deja rastro AWS US (Supabase Edge).",
+      "Endpoints caros: keywords-explorer/* y site-explorer/organic-keywords — no el panel UI."
+    ]
+  },
+  "compare": {
+    "previous": {
+      "units": 406833,
+      "mcp_units": 244492,
+      "mcp_pct": 60.1,
+      "per_day": 13561,
+      "days": 30,
+      "accesos": 244492,
+      "orbit": 162341
+    },
+    "current": {
+      "units": 86251,
+      "mcp_units": 39878,
+      "mcp_pct": 46.2,
+      "per_day": 10781,
+      "days": 8,
+      "accesos": 39878,
+      "orbit": 46373
+    },
+    "burn_ratio": 0.8
+  },
+  "current": {
+    "period": {
+      "id": "current",
+      "label": "11–19 jul 2026",
+      "from": "2026-07-11",
+      "to": "2026-07-19"
+    },
+    "rows": 147,
+    "paid_rows": 115,
+    "total_units": 86251,
+    "mcp_units": 39878,
+    "api_units": 46373,
+    "mcp_pct": 46.2,
+    "days": 8,
+    "per_day": 10781,
+    "by_user": [
+      {
+        "name": "Online Enterprises LLC",
+        "units": 46373,
+        "calls": 115,
+        "paid_calls": 88
+      },
+      {
+        "name": "Accesos SeoLab",
+        "units": 39878,
+        "calls": 32,
+        "paid_calls": 27
+      }
+    ],
+    "by_scope": [
+      {
+        "name": "apiv3",
+        "units": 46373,
+        "calls": 115,
+        "paid_calls": 88
+      },
+      {
+        "name": "apiv3-mcp",
+        "units": 39878,
+        "calls": 32,
+        "paid_calls": 27
+      }
+    ],
+    "by_endpoint": [
+      {
+        "name": "keywords-explorer/matching-terms",
+        "units": 31429,
+        "calls": 5,
+        "paid_calls": 5
+      },
+      {
+        "name": "site-explorer/organic-keywords",
+        "units": 24759,
+        "calls": 14,
+        "paid_calls": 14
+      },
+      {
+        "name": "site-explorer/top-pages",
+        "units": 9720,
+        "calls": 6,
+        "paid_calls": 6
+      },
+      {
+        "name": "site-explorer/all-backlinks",
+        "units": 6000,
+        "calls": 3,
+        "paid_calls": 3
+      },
+      {
+        "name": "site-explorer/refdomains",
+        "units": 4200,
+        "calls": 3,
+        "paid_calls": 3
+      },
+      {
+        "name": "keywords-explorer/overview",
+        "units": 4155,
+        "calls": 6,
+        "paid_calls": 6
+      },
+      {
+        "name": "site-explorer/domain-rating",
+        "units": 1100,
+        "calls": 22,
+        "paid_calls": 22
+      },
+      {
+        "name": "site-explorer/backlinks-stats",
+        "units": 1000,
+        "calls": 20,
+        "paid_calls": 20
+      }
+    ],
+    "by_agent": [
+      {
+        "name": "Orbit · Supabase Edge",
+        "units": 46373,
+        "calls": 93,
+        "paid_calls": 88
+      },
+      {
+        "name": "MCP · OpenAI",
+        "units": 36093,
+        "calls": 15,
+        "paid_calls": 15
+      },
+      {
+        "name": "MCP · Claude",
+        "units": 3575,
+        "calls": 15,
+        "paid_calls": 10
+      },
+      {
+        "name": "MCP · Codex",
+        "units": 210,
+        "calls": 2,
+        "paid_calls": 2
+      },
+      {
+        "name": "Monitor · axios",
+        "units": 0,
+        "calls": 7,
+        "paid_calls": 0
+      },
+      {
+        "name": "Orbit · node",
+        "units": 0,
+        "calls": 14,
+        "paid_calls": 0
+      }
+    ],
+    "by_day": [
+      {
+        "day": "2026-07-12",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-13",
+        "units": 35616,
+        "calls": 43,
+        "paid_calls": 29
+      },
+      {
+        "day": "2026-07-14",
+        "units": 46233,
+        "calls": 75,
+        "paid_calls": 70
+      },
+      {
+        "day": "2026-07-15",
+        "units": 500,
+        "calls": 12,
+        "paid_calls": 10
+      },
+      {
+        "day": "2026-07-16",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-17",
+        "units": 210,
+        "calls": 4,
+        "paid_calls": 2
+      },
+      {
+        "day": "2026-07-18",
+        "units": 3692,
+        "calls": 10,
+        "paid_calls": 4
+      },
+      {
+        "day": "2026-07-19",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      }
+    ],
+    "by_region": [
+      {
+        "name": "🇺🇸 AWS US-East · Supabase Edge",
+        "units": 46373,
+        "calls": 93,
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "🛰️ Sin IP · MCP remoto Ahrefs",
+        "units": 39878,
+        "calls": 32,
+        "flag": "🛰️",
+        "country": "n/a"
+      },
+      {
+        "name": "🇻🇪 LatAm (VE/CO)",
+        "units": 0,
+        "calls": 6,
+        "flag": "🇻🇪",
+        "country": "LATAM"
+      },
+      {
+        "name": "🇪🇺 Monitor cron (EU ASN)",
+        "units": 0,
+        "calls": 7,
+        "flag": "🇪🇺",
+        "country": "EU"
+      },
+      {
+        "name": "🇺🇸 AWS US · node/EC2",
+        "units": 0,
+        "calls": 9,
+        "flag": "🇺🇸",
+        "country": "US"
+      }
+    ],
+    "by_ip": [
+      {
+        "name": "(mcp-blank)",
+        "units": 39878,
+        "calls": 32,
+        "label": "Sin IP · MCP remoto Ahrefs",
+        "region": "mcp",
+        "flag": "🛰️",
+        "country": "n/a"
+      },
+      {
+        "name": "2600:1f18:5427:6509:df76:613b:1dcc:b481",
+        "units": 6800,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "2600:1f18:5427:6508:1529:948d:5cd6:1ba6",
+        "units": 6800,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "2600:1f1e:229:a90b:b71e:cf39:2e0b:7ace",
+        "units": 6750,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "2600:1f18:5427:650b:a35f:a8bb:6f0c:be98",
+        "units": 6000,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "2600:1f18:5427:650a:9744:6391:8ce2:7477",
+        "units": 3420,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "2600:1f18:5427:6508:625:8f18:a1c6:bcd9",
+        "units": 2000,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "2600:1f18:5427:6508:24d8:1401:af42:9038",
+        "units": 2000,
+        "calls": 1,
+        "label": "AWS US-East · Supabase Edge",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      }
+    ],
+    "top_calls": [
+      {
+        "units": 13250,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "keywords-explorer/matching-terms",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-07-13 13:21:08"
+      },
+      {
+        "units": 13250,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "keywords-explorer/matching-terms",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-07-13 13:20:51"
+      },
+      {
+        "units": 6800,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": "2600:1f18:5427:6509:df76:613b:1dcc:b481",
+        "ip_hint": {
+          "label": "AWS US-East · Supabase Edge",
+          "region": "us",
+          "flag": "🇺🇸",
+          "country": "US"
+        },
+        "at": "2026-07-14 16:25:37"
+      },
+      {
+        "units": 6800,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": "2600:1f18:5427:6508:1529:948d:5cd6:1ba6",
+        "ip_hint": {
+          "label": "AWS US-East · Supabase Edge",
+          "region": "us",
+          "flag": "🇺🇸",
+          "country": "US"
+        },
+        "at": "2026-07-14 11:20:31"
+      },
+      {
+        "units": 6750,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": "2600:1f1e:229:a90b:b71e:cf39:2e0b:7ace",
+        "ip_hint": {
+          "label": "AWS US-East · Supabase Edge",
+          "region": "us",
+          "flag": "🇺🇸",
+          "country": "US"
+        },
+        "at": "2026-07-14 20:30:49"
+      },
+      {
+        "units": 6000,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/top-pages",
+        "ip": "2600:1f18:5427:650b:a35f:a8bb:6f0c:be98",
+        "ip_hint": {
+          "label": "AWS US-East · Supabase Edge",
+          "region": "us",
+          "flag": "🇺🇸",
+          "country": "US"
+        },
+        "at": "2026-07-14 11:20:32"
+      },
+      {
+        "units": 3420,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/top-pages",
+        "ip": "2600:1f18:5427:650a:9744:6391:8ce2:7477",
+        "ip_hint": {
+          "label": "AWS US-East · Supabase Edge",
+          "region": "us",
+          "flag": "🇺🇸",
+          "country": "US"
+        },
+        "at": "2026-07-14 16:25:38"
+      },
+      {
+        "units": 2650,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "keywords-explorer/matching-terms",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-07-18 21:12:35"
+      }
+    ]
+  },
+  "previous": {
+    "period": {
+      "id": "previous",
+      "label": "11 jun – 11 jul 2026",
+      "from": "2026-06-11",
+      "to": "2026-07-11"
+    },
+    "rows": 693,
+    "paid_rows": 561,
+    "total_units": 406833,
+    "mcp_units": 244492,
+    "api_units": 162341,
+    "mcp_pct": 60.1,
+    "days": 30,
+    "per_day": 13561,
+    "by_user": [
+      {
+        "name": "Accesos SeoLab",
+        "units": 244492,
+        "calls": 346,
+        "paid_calls": 319
+      },
+      {
+        "name": "Online Enterprises LLC",
+        "units": 162341,
+        "calls": 347,
+        "paid_calls": 242
+      }
+    ],
+    "by_scope": [
+      {
+        "name": "apiv3-mcp",
+        "units": 244492,
+        "calls": 346,
+        "paid_calls": 319
+      },
+      {
+        "name": "apiv3",
+        "units": 162341,
+        "calls": 347,
+        "paid_calls": 242
+      }
+    ],
+    "by_endpoint": [
+      {
+        "name": "site-explorer/organic-keywords",
+        "units": 114149,
+        "calls": 55,
+        "paid_calls": 54
+      },
+      {
+        "name": "keywords-explorer/matching-terms",
+        "units": 109514,
+        "calls": 46,
+        "paid_calls": 46
+      },
+      {
+        "name": "site-explorer/top-pages",
+        "units": 42408,
+        "calls": 39,
+        "paid_calls": 37
+      },
+      {
+        "name": "keywords-explorer/overview",
+        "units": 30727,
+        "calls": 43,
+        "paid_calls": 43
+      },
+      {
+        "name": "site-explorer/all-backlinks",
+        "units": 23380,
+        "calls": 19,
+        "paid_calls": 19
+      },
+      {
+        "name": "keywords-explorer/search-suggestions",
+        "units": 22840,
+        "calls": 5,
+        "paid_calls": 5
+      },
+      {
+        "name": "site-explorer/refdomains",
+        "units": 15315,
+        "calls": 15,
+        "paid_calls": 15
+      },
+      {
+        "name": "keywords-explorer/related-terms",
+        "units": 8355,
+        "calls": 3,
+        "paid_calls": 3
+      }
+    ],
+    "by_agent": [
+      {
+        "name": "MCP · OpenAI",
+        "units": 193669,
+        "calls": 233,
+        "paid_calls": 225
+      },
+      {
+        "name": "Orbit · Supabase Edge",
+        "units": 138861,
+        "calls": 260,
+        "paid_calls": 230
+      },
+      {
+        "name": "MCP · Claude",
+        "units": 50823,
+        "calls": 113,
+        "paid_calls": 94
+      },
+      {
+        "name": "Orbit · node",
+        "units": 23480,
+        "calls": 56,
+        "paid_calls": 12
+      },
+      {
+        "name": "Monitor · axios",
+        "units": 0,
+        "calls": 30,
+        "paid_calls": 0
+      }
+    ],
+    "by_day": [
+      {
+        "day": "2026-06-12",
+        "units": 240,
+        "calls": 6,
+        "paid_calls": 4
+      },
+      {
+        "day": "2026-06-13",
+        "units": 12158,
+        "calls": 19,
+        "paid_calls": 15
+      },
+      {
+        "day": "2026-06-14",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-06-15",
+        "units": 14765,
+        "calls": 34,
+        "paid_calls": 33
+      },
+      {
+        "day": "2026-06-16",
+        "units": 6352,
+        "calls": 64,
+        "paid_calls": 61
+      },
+      {
+        "day": "2026-06-17",
+        "units": 1395,
+        "calls": 11,
+        "paid_calls": 10
+      },
+      {
+        "day": "2026-06-18",
+        "units": 9223,
+        "calls": 8,
+        "paid_calls": 7
+      },
+      {
+        "day": "2026-06-19",
+        "units": 15826,
+        "calls": 34,
+        "paid_calls": 13
+      },
+      {
+        "day": "2026-06-20",
+        "units": 12323,
+        "calls": 27,
+        "paid_calls": 17
+      },
+      {
+        "day": "2026-06-21",
+        "units": 5130,
+        "calls": 2,
+        "paid_calls": 1
+      },
+      {
+        "day": "2026-06-22",
+        "units": 1775,
+        "calls": 28,
+        "paid_calls": 23
+      },
+      {
+        "day": "2026-06-23",
+        "units": 52296,
+        "calls": 25,
+        "paid_calls": 24
+      },
+      {
+        "day": "2026-06-24",
+        "units": 24689,
+        "calls": 126,
+        "paid_calls": 125
+      },
+      {
+        "day": "2026-06-25",
+        "units": 99210,
+        "calls": 26,
+        "paid_calls": 22
+      },
+      {
+        "day": "2026-06-26",
+        "units": 64542,
+        "calls": 44,
+        "paid_calls": 41
+      },
+      {
+        "day": "2026-06-27",
+        "units": 300,
+        "calls": 8,
+        "paid_calls": 6
+      },
+      {
+        "day": "2026-06-28",
+        "units": 11173,
+        "calls": 66,
+        "paid_calls": 56
+      },
+      {
+        "day": "2026-06-29",
+        "units": 2043,
+        "calls": 29,
+        "paid_calls": 23
+      },
+      {
+        "day": "2026-06-30",
+        "units": 11507,
+        "calls": 33,
+        "paid_calls": 30
+      },
+      {
+        "day": "2026-07-01",
+        "units": 100,
+        "calls": 3,
+        "paid_calls": 2
+      },
+      {
+        "day": "2026-07-02",
+        "units": 61786,
+        "calls": 65,
+        "paid_calls": 48
+      },
+      {
+        "day": "2026-07-03",
+        "units": 0,
+        "calls": 9,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-04",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-05",
+        "units": 0,
+        "calls": 2,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-06",
+        "units": 0,
+        "calls": 2,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-07",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-08",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-09",
+        "units": 0,
+        "calls": 1,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-10",
+        "units": 0,
+        "calls": 15,
+        "paid_calls": 0
+      },
+      {
+        "day": "2026-07-11",
+        "units": 0,
+        "calls": 2,
+        "paid_calls": 0
+      }
+    ],
+    "by_region": [
+      {
+        "name": "🛰️ Sin IP · MCP remoto Ahrefs",
+        "units": 244492,
+        "calls": 346,
+        "flag": "🛰️",
+        "country": "n/a"
+      },
+      {
+        "name": "🇺🇸 AWS US-East · Supabase Edge",
+        "units": 40007,
+        "calls": 230,
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "🇺🇸 AWS US · node/EC2",
+        "units": 14242,
+        "calls": 42,
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "🌐 35.168.15.229",
+        "units": 8929,
+        "calls": 3,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d507:8337:af9",
+        "units": 8500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d505:bb41:f86",
+        "units": 8500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d500:2f1a:3fd",
+        "units": 8500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d509:7b37:bf6",
+        "units": 8500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d504:dd9d:a6d",
+        "units": 8500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d507:b964:b1f",
+        "units": 7500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50a:113:5d32",
+        "units": 7500,
+        "calls": 2,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d507:6f45:480",
+        "units": 7500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d507:4340:949",
+        "units": 7500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50b:de9:ddf1",
+        "units": 5000,
+        "calls": 2,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d507:fe1a:836",
+        "units": 2500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d502:3ca9:a96",
+        "units": 2500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d509:e05d:277",
+        "units": 2500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d505:1a02:aa5",
+        "units": 2500,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d509:2819:4a7",
+        "units": 1750,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d500:d9c1:94d",
+        "units": 1750,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d508:a3ed:f50",
+        "units": 1750,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d504:fad6:a98",
+        "units": 1750,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d506:3c33:a65",
+        "units": 1750,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50b:e09f:bf6",
+        "units": 1750,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🇻🇪 LatAm (VE/CO)",
+        "units": 309,
+        "calls": 5,
+        "flag": "🇻🇪",
+        "country": "LATAM"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d504:180f:847",
+        "units": 238,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50a:dde6:e2a",
+        "units": 210,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d509:74e8:620",
+        "units": 136,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50a:6afd:8ab",
+        "units": 100,
+        "calls": 2,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50a:abb8:126",
+        "units": 70,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50a:8ce3:b99",
+        "units": 50,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 2600:1f16:14f1:d50b:8219:84f",
+        "units": 50,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🇪🇺 Monitor cron (EU ASN)",
+        "units": 0,
+        "calls": 30,
+        "flag": "🇪🇺",
+        "country": "EU"
+      },
+      {
+        "name": "🌐 32.199.138.236",
+        "units": 0,
+        "calls": 2,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 100.27.47.10",
+        "units": 0,
+        "calls": 4,
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "🌐 13.220.94.88",
+        "units": 0,
+        "calls": 1,
+        "flag": "🌐",
+        "country": "??"
+      }
+    ],
+    "by_ip": [
+      {
+        "name": "(mcp-blank)",
+        "units": 244492,
+        "calls": 346,
+        "label": "Sin IP · MCP remoto Ahrefs",
+        "region": "mcp",
+        "flag": "🛰️",
+        "country": "n/a"
+      },
+      {
+        "name": "98.81.209.118",
+        "units": 14192,
+        "calls": 5,
+        "label": "AWS US · node/EC2",
+        "region": "us",
+        "flag": "🇺🇸",
+        "country": "US"
+      },
+      {
+        "name": "35.168.15.229",
+        "units": 8929,
+        "calls": 3,
+        "label": "35.168.15.229",
+        "region": "other",
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "2600:1f16:14f1:d507:8337:af97:a4c8:fc2a",
+        "units": 8500,
+        "calls": 1,
+        "label": "2600:1f16:14f1:d507:8337:af9",
+        "region": "other",
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "2600:1f16:14f1:d505:bb41:f867:3720:5790",
+        "units": 8500,
+        "calls": 1,
+        "label": "2600:1f16:14f1:d505:bb41:f86",
+        "region": "other",
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "2600:1f16:14f1:d500:2f1a:3fda:f178:2ef3",
+        "units": 8500,
+        "calls": 1,
+        "label": "2600:1f16:14f1:d500:2f1a:3fd",
+        "region": "other",
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "2600:1f16:14f1:d509:7b37:bf6d:f3ca:c147",
+        "units": 8500,
+        "calls": 1,
+        "label": "2600:1f16:14f1:d509:7b37:bf6",
+        "region": "other",
+        "flag": "🌐",
+        "country": "??"
+      },
+      {
+        "name": "2600:1f16:14f1:d504:dd9d:a6d8:3d4c:68b8",
+        "units": 8500,
+        "calls": 1,
+        "label": "2600:1f16:14f1:d504:dd9d:a6d",
+        "region": "other",
+        "flag": "🌐",
+        "country": "??"
+      }
+    ],
+    "top_calls": [
+      {
+        "units": 13250,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "keywords-explorer/search-suggestions",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-06-23 21:30:15"
+      },
+      {
+        "units": 10800,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "keywords-explorer/matching-terms",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-06-19 12:00:18"
+      },
+      {
+        "units": 9500,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · Claude",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-07-02 21:02:04"
+      },
+      {
+        "units": 9000,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-06-15 13:56:55"
+      },
+      {
+        "units": 8600,
+        "scope": "apiv3-mcp",
+        "creator": "Accesos SeoLab",
+        "agent": "MCP · OpenAI",
+        "endpoint": "keywords-explorer/search-suggestions",
+        "ip": null,
+        "ip_hint": {
+          "label": "Sin IP · MCP remoto Ahrefs",
+          "region": "mcp",
+          "flag": "🛰️",
+          "country": "n/a"
+        },
+        "at": "2026-06-26 14:08:26"
+      },
+      {
+        "units": 8500,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · node",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": "35.168.15.229",
+        "ip_hint": {
+          "label": "35.168.15.229",
+          "region": "other",
+          "flag": "🌐",
+          "country": "??"
+        },
+        "at": "2026-07-02 03:38:15"
+      },
+      {
+        "units": 8500,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": "2600:1f16:14f1:d507:8337:af97:a4c8:fc2a",
+        "ip_hint": {
+          "label": "2600:1f16:14f1:d507:8337:af9",
+          "region": "other",
+          "flag": "🌐",
+          "country": "??"
+        },
+        "at": "2026-06-25 02:26:02"
+      },
+      {
+        "units": 8500,
+        "scope": "apiv3",
+        "creator": "Online Enterprises LLC",
+        "agent": "Orbit · Supabase Edge",
+        "endpoint": "site-explorer/organic-keywords",
+        "ip": "2600:1f16:14f1:d505:bb41:f867:3720:5790",
+        "ip_hint": {
+          "label": "2600:1f16:14f1:d505:bb41:f86",
+          "region": "other",
+          "flag": "🌐",
+          "country": "??"
+        },
+        "at": "2026-06-25 02:26:02"
+      }
+    ]
+  }
+}

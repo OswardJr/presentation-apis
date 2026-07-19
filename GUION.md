@@ -1,112 +1,61 @@
-# Guion — Control de APIs (≈20 min · 8 slides)
+# Guion — Control de APIs (≈20 min · 9 slides)
 
 **Presenta:** Osward · **Gestión:** Sebastian · **Docs:** Orbit  
-**URL:** presentation-apis (Vercel)
 
 ---
 
-## Números a memorizar
+## Hallazgo estrella (memorizar)
 
-**Semrush (10–13 jul):** 36.370 → 0 · 460 explicadas · **35.900 (98,7%) sin log** · golpes −15.660 y −20.240  
-**Ahrefs:** 86.251 / 400.000 (**21,6%**) · esta key Orbit **46.373 (~54%)** · resto **~39.878 (~46%)** · Brand Radar ~7.200/300
+| | Mes anterior (11 jun–11 jul) | Ciclo actual (11–19 jul) |
+|---|---|---|
+| **Total API units** | **406.833** | **86.251** |
+| **/día** | 13.561 | 10.781 |
+| **MCP %** | **60%** | **46%** |
+| **Accesos SeoLab** (MCP) | **244.492** | **39.878** |
+| **Online Enterprises** (Orbit/Esteban) | 162.341 | **46.373** |
 
----
-
-## 1. Portada (30 s)
-
-> “Semrush nos avisó. Ahrefs todavía tiene margen. Hoy: qué pasó, por qué se gasta, cómo usar MCP, y reglas en Orbit.”
-
----
-
-## 2. Caso Semrush + contraste de modelos (3 min)
-
-> “De 36.370 a cero en tres días. Solo el 1,3% está en nuestros logs. El 98,7% fue invisible.”
-
-Cierra con el contraste ([doc Ahrefs créditos](https://help.ahrefs.com/en/articles/6061657-ahrefs-usage-based-pricing-for-credit-based-plans)):
-
-> “Semrush es un paquete prepago de units sin reset. Ahrefs Standard 2022 tiene **dos medidores**: créditos de interfaz (cobro por usuario) y API units (cupo mensual que sí resetea). No son lo mismo.”
+- Accesos = `accesos@seolabagency.com` · Miembro · Claude / OpenAI / Codex MCP  
+- Online Ent. = `info@seolabagency.com` · Propietario · Esteban · Orbit/Supabase  
+- Llamada asesina: `keywords-explorer/matching-terms` → **13.250 units** (MCP, sin IP)
 
 ---
 
-## 3. Gasto Ahrefs — dos medidores (3–4 min)
+## 1. Portada
+> “El gasto ya tiene nombre. Semrush fue el detonante; el CSV de Ahrefs muestra el resto.”
 
-> “Standard 2022 es plan credit-based legacy — no el Standard Unlimited nuevo.”
+## 2. Semrush (breve)
+36.370 → 0 · 98,7% invisible. Contraste: Semrush sin log vs Ahrefs con Token creator + scope MCP.
 
-**Medidor 1 — API units:** 86.251 / 400.000 (21,6%) · Orbit ~54% · resto keys/MCP ~46%.
+## 3. CSV comparativo (3 min) — atacar
+> “El mes pasado nos comimos 406 mil units. Accesos MCP solo: 244 mil — el 60%. OpenAI MCP lideró.”
 
-**Medidor 2 — Créditos UI:** 1 crédito al abrir reporte / filtrar / pedir datos (no Site Audit ni Rank Tracker).
-| Usuario | Créditos | Nivel | Cobro |
-|---|---|---|---|
-| Accesos SeoLab | 41/600 | Casual (6–100) | ~$20/mes |
-| Online Enterprises | 12 | Casual | ~$20/mes |
+> “Este ciclo, en 8 días, ya van 86 mil a ~10.800/día — el 80% del ritmo del mes que se evaporó. Orbit ahora lidera por poco, pero MCP sigue en 40 mil.”
 
-Power = 101–600 → $60/mes. El plan incluye 1 Power. Pay-as-you-go créditos **off** (bien).  
-Brand Radar ~7.200/300 = tercer cupo.
+Mostrar sparks / barras.
 
-> “21% de API no es crisis. El riesgo es pico sin dueño + usuarios que suben de Casual a Power sin control.”
+## 4. Usuarios y canales (2.5 min)
+Nombrar emails y roles. Scope `apiv3-mcp` vs `apiv3`.  
+> “No es ‘la API de la empresa’ en abstracto: es Accesos con OpenAI MCP y Esteban con Orbit.”
 
----
+## 5. Endpoints + IP (2.5 min)
+matching-terms, organic-keywords, top-pages.  
+> “MCP no deja IP — satélite. Orbit deja AWS US Supabase. LatAm solo aparece en lecturas de saldo a 0 units.”
 
-## 4. MCP — sí hay recomendaciones (3 min)
+Dos matching-terms el 13 jul = 26.500 units.
 
-Principio:
+## 6. MCP reglas (2 min)
+Techo en key Accesos. Prohibir matching-terms masivo. Separar clientes MCP. Proxy para clientes.
 
-> “MCP de Ahrefs gasta el mismo cupo que la API. Un agente en bucle puede quemar miles de units en minutos.”
+## 7. Política (1.5 min)
+4 pilares + créditos UI Casual $20 ambos usuarios.
 
-Reglas (recita 4–5):
-- Cache Orbit primero  
-- Una pregunta = consulta acotada  
-- Dev con targets de prueba  
-- select + limit bajos  
-- No key MCP ilimitada compartida  
-- Trabajo de clientes → proxy Orbit  
+## 8. Acciones (2 min)
+Dueños en voz alta: tope Accesos, ban matching-terms masivo, techo Orbit, inventario MCP, Semrush, proxy.
 
-Acciones: inventariar keys MCP, **poner tope mensual por key**, revocar sin uso, alinear con Esteban.
-
----
-
-## 5. Política en 4 pilares (2 min)
-
-No leas ocho puntos sueltos. Agrupa:
-- Control/fuentes · Costo/excepciones · MCP/terceros · Monitoreo  
-
-Excepciones: Sebastian + tú · Orbit · ventana temporal.
+## 9. Cierre
+> “Accesos MCP quemó el mes. Orbit también gasta — pero con log. Techos por key.”
 
 ---
 
-## 6. Operación (2 min)
-
-Tu rol + Esteban (IDEs) + protocolo:
-
-> “Si el saldo cae y el log está vacío → gasto fuera del proxy. Inventario de keys, aislar, pedir desglose al vendor.”
-
-Umbrales: 50 / 75 / 90 · hoy 21,6%.
-
----
-
-## 7. Acciones de la semana (2 min)
-
-Pide dueños en voz alta:
-1. Inventario keys — Osward  
-2. Techos MCP — Osward + Esteban  
-3. Cerrar Semrush (panel + soporte) — Gestión  
-4. Brand Radar — Osward  
-5. Proxy obligatorio — Equipo  
-6. Recarga Semrush — Sebastian  
-
----
-
-## 8. Cierre (30 s)
-
-> “Proxy + techos + dueños. Si gasta units, debe tener dueño, límite y log.”
-
----
-
-## Timing
-
-| Slide | Min |
-|---|---|
-| Portada + Semrush | 3.5 |
-| Gasto Ahrefs + MCP | 7 |
-| Política + operación | 4 |
-| Acciones + cierre + Q&A | resto |
+## Si preguntan “¿culpa de Esteban?”
+Orbit gasta (Supabase Edge, organic-keywords). Es trabajo de plataforma. El burn descontrolado del mes anterior fue **mayoritariamente MCP bajo Accesos**, no el panel UI.

@@ -158,23 +158,23 @@
     "contrast_semrush": "Semrush API = paquete prepago de units sin reset mensual. Ahrefs = créditos UI (cobro por usuario activo) + cupo mensual de API units (sí resetea)."
   },
   "spend_analysis": {
-    "summary": "86.251 API units en el ciclo: ~54% key Orbit, ~46% otras keys/UI/MCP. Además: créditos UI por usuario (Casual/Power) — otro costo. Key Orbit sin tope (null).",
+    "summary": "CSV forense: ciclo actual 86.251 units (Orbit/Esteban 46.373 vs MCP/Accesos 39.878). Mes anterior 406.833 — Accesos MCP 244.492 (60%).",
     "drivers": [
       {
-        "title": "API units · Orbit (~54%)",
-        "detail": "ahrefs-api-proxy: smart-report, keywords, competitors, content gap, forecast, backlinks. Mín. 50 units/request."
+        "title": "MCP Accesos SeoLab",
+        "detail": "accesos@ · Miembro · scope apiv3-mcp · OpenAI/Claude/Codex. Mes anterior 244k units. matching-terms hasta 13.250/call."
       },
       {
-        "title": "API units · fuera de esa key (~46%)",
-        "detail": "Otras keys, MCP e integraciones. El panel UI gasta créditos, no estas units — pero otras keys sí."
+        "title": "Orbit Online Enterprises",
+        "detail": "info@ · Propietario (Esteban) · Supabase Edge AWS US · site-explorer/organic-keywords, top-pages, refdomains."
       },
       {
-        "title": "Créditos UI · cobro por usuario",
-        "detail": "Legacy Standard: Casual $20 (6–100) · Power $60 (101–600). Hoy SeoLab 41 y Online Ent. 12 = ambos Casual."
+        "title": "Créditos UI (aparte)",
+        "detail": "Legacy Standard Casual $20: SeoLab 41 y Online Ent. 12. No explica el burn de API units."
       },
       {
-        "title": "Brand Radar (cupo aparte)",
-        "detail": "~7.200 / 300 comprobaciones: ni créditos UI ni API units estándar — tercer medidor desbordado."
+        "title": "Brand Radar (3.er cupo)",
+        "detail": "~7.200 / 300 comprobaciones — desbordado, otro síntoma de uso sin techo."
       }
     ]
   },

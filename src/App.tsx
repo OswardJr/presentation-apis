@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { AnalyticsData, LogBucket } from './analyticsTypes';
 import type { ApiBlock, UsageData } from './types';
 
 function fmt(n: number | null | undefined): string {
@@ -39,26 +40,69 @@ function useDeckNavigation(total: number) {
   };
 }
 
-function Bar({ value, max, warn = false }: { value: number; max: number; warn?: boolean }) {
-  const width = max > 0 ? Math.min(100, (value / max) * 100) : 0;
+function HBars({
+  items,
+  tone = 'cyan',
+}: {
+  items: LogBucket[];
+  tone?: 'cyan' | 'rose' | 'amber';
+}) {
+  const max = items[0]?.units || 1;
   return (
-    <div className={`bar${warn ? ' warn' : ''}`}>
-      <span style={{ width: `${width}%` }} />
+    <div className="hbar-list">
+      {items.map((it) => (
+        <div className="hbar-row" key={it.name}>
+          <span className="hbar-label" title={it.name}>
+            {it.flag ? `${it.flag} ` : ''}
+            {it.name}
+          </span>
+          <div className={`hbar-track ${tone === 'cyan' ? '' : tone}`}>
+            <i style={{ width: `${Math.max(3, (it.units / max) * 100)}%` }} />
+          </div>
+          <span className="hbar-val">{fmt(it.units)}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Spark({ days }: { days: { day: string; units: number }[] }) {
+  const max = Math.max(1, ...days.map((d) => d.units));
+  const avg = days.reduce((s, d) => s + d.units, 0) / Math.max(1, days.length);
+  return (
+    <div className="spark" title="Units por día">
+      {days.map((d) => (
+        <span
+          key={d.day}
+          className={d.units > avg * 1.4 ? 'hot' : undefined}
+          style={{ height: `${Math.max(8, (d.units / max) * 100)}%` }}
+          title={`${d.day}: ${fmt(d.units)}`}
+        />
+      ))}
     </div>
   );
 }
 
 export default function App() {
   const [data, setData] = useState<UsageData | null>(null);
+  const [logs, setLogs] = useState<AnalyticsData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/data/apis-usage.json')
-      .then((r) => {
-        if (!r.ok) throw new Error(`No se pudo cargar apis-usage.json (${r.status})`);
+    Promise.all([
+      fetch('/data/apis-usage.json').then((r) => {
+        if (!r.ok) throw new Error(`apis-usage.json (${r.status})`);
         return r.json();
+      }),
+      fetch('/data/ahrefs-api-log-analytics.json').then((r) => {
+        if (!r.ok) throw new Error(`ahrefs-api-log-analytics.json (${r.status})`);
+        return r.json();
+      }),
+    ])
+      .then(([usage, analytics]) => {
+        setData(usage);
+        setLogs(analytics);
       })
-      .then(setData)
       .catch((e: Error) => setError(e.message));
   }, []);
 
@@ -68,9 +112,9 @@ export default function App() {
   );
 
   const slides = useMemo(() => {
-    if (!data || !ahrefs) return [] as { id: string; title: string; node: ReactNode }[];
-    return buildSlides(data, ahrefs);
-  }, [data, ahrefs]);
+    if (!data || !ahrefs || !logs) return [] as { id: string; title: string; node: ReactNode }[];
+    return buildSlides(data, ahrefs, logs);
+  }, [data, ahrefs, logs]);
 
   const nav = useDeckNavigation(slides.length || 1);
   const current = slides[nav.index];
@@ -119,14 +163,13 @@ export default function App() {
   );
 }
 
-function buildSlides(data: UsageData, ahrefs: ApiBlock) {
+function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
   const api = ahrefs.api!;
-  const ui = ahrefs.ui_panel!;
-  const brandRadar = ui.brand_radar_prompt_checks;
-  const report = data.trigger_case.report;
-  const spend = data.spend_analysis;
   const credits = data.credits_model;
   const mcp = data.mcp_policy;
+  const report = data.trigger_case.report;
+  const { compare, current: cur, previous: prev } = logs;
+  const maxUserPrev = Math.max(compare.previous.accesos, compare.previous.orbit, 1);
 
   return [
     {
@@ -134,13 +177,13 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
       title: 'Portada',
       node: (
         <section className="slide">
-          <span className="kicker">Exposición · {data.meta.duration_minutes} min · 8 slides</span>
+          <span className="kicker">Exposición · CSV Ahrefs · forense</span>
           <h1>
-            Uso y control de las <span className="neon">APIs</span>
+            El gasto ya tiene <span className="neon-rose">nombre</span>
           </h1>
           <p className="lead">
-            Semrush nos avisó. Ahrefs todavía tiene margen. Hoy: qué pasó, por qué se gasta, cómo
-            usar MCP, y reglas claras en Orbit.
+            Semrush fue el detonante. Los exports de Ahrefs muestran el resto: MCP bajo Accesos
+            SeoLab vs Orbit bajo Esteban (Online Enterprises).
           </p>
           <div className="hero-meta">
             <span>
@@ -178,33 +221,26 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
                     <span className="value neon-rose" style={{ fontSize: '1.5rem' }}>
                       {fmt(d.delta)}
                     </span>
-                    <span className="hint">
-                      {d.window} · sin llamadas en log
-                    </span>
+                    <span className="hint">{d.window} · sin log</span>
                   </div>
                 ))}
               </div>
               <div className="alert critical">
-                Explicadas: {fmt(report?.explained_units)}. Hipótesis Position Tracking (no
-                confirmada). Fuera del proxy = invisible.
+                Lección: fuera del proxy = invisible. En Ahrefs el CSV sí deja Token creator +
+                scope MCP.
               </div>
             </div>
             <div className="panel stack">
-              <h3>Semrush vs Ahrefs (modelos distintos)</h3>
+              <h3>Dos modelos de riesgo</h3>
               <ul className="list">
                 <li>
                   <span className="n">SM</span>
-                  <span>
-                    <strong style={{ color: 'var(--ink)' }}>Semrush API:</strong> paquete prepago
-                    de units, sin reset mensual → si llega a 0, se apaga.
-                  </span>
+                  <span>Semrush: prepago sin reset → se apaga en 0.</span>
                 </li>
                 <li>
                   <span className="n">AH</span>
                   <span>
-                    <strong style={{ color: 'var(--ink)' }}>Ahrefs Standard 2022:</strong> dos
-                    medidores — créditos UI (cobro por usuario) + API units (cupo mensual que sí
-                    resetea).
+                    Ahrefs: créditos UI + API units. Y además scope <span className="mono">apiv3-mcp</span>.
                   </span>
                 </li>
                 <li>
@@ -212,9 +248,92 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
                   <span>{credits?.key_point}</span>
                 </li>
               </ul>
-              <div className="chips">
-                <span className="chip danger">Semrush 0 units</span>
-                <span className="chip hot">Ahrefs API ~{pct(api.pct_workspace)}</span>
+            </div>
+          </div>
+        </section>
+      ),
+    },
+    {
+      id: 'csv-compare',
+      title: 'CSV comparativo',
+      node: (
+        <section className="slide">
+          <span className="kicker">Exports Ahrefs · API log</span>
+          <h2>
+            Ciclo anterior vs <span className="neon">actual</span>
+          </h2>
+          <div className="grid-2">
+            <div className="panel stack">
+              <h3>Mes anterior · {prev.period.label}</h3>
+              <div className="big-number neon-rose" style={{ fontSize: '2.6rem' }}>
+                {fmt(compare.previous.units)}
+              </div>
+              <span className="hint" style={{ color: 'var(--muted)' }}>
+                {fmt(compare.previous.per_day)}/día · MCP {compare.previous.mcp_pct}%
+              </span>
+              <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
+                <div className="hbar-row">
+                  <span className="hbar-label">Accesos · MCP</span>
+                  <div className="hbar-track rose">
+                    <i
+                      style={{
+                        width: `${(compare.previous.accesos / maxUserPrev) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="hbar-val">{fmt(compare.previous.accesos)}</span>
+                </div>
+                <div className="hbar-row">
+                  <span className="hbar-label">Online Ent. · Orbit</span>
+                  <div className="hbar-track">
+                    <i
+                      style={{
+                        width: `${(compare.previous.orbit / maxUserPrev) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="hbar-val">{fmt(compare.previous.orbit)}</span>
+                </div>
+              </div>
+              <Spark days={prev.by_day} />
+            </div>
+            <div className="panel stack">
+              <h3>Ciclo actual · {cur.period.label}</h3>
+              <div className="big-number neon" style={{ fontSize: '2.6rem' }}>
+                {fmt(compare.current.units)}
+              </div>
+              <span className="hint" style={{ color: 'var(--muted)' }}>
+                {fmt(compare.current.per_day)}/día · MCP {compare.current.mcp_pct}% ·{' '}
+                {compare.current.days} días
+              </span>
+              <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
+                <div className="hbar-row">
+                  <span className="hbar-label">Accesos · MCP</span>
+                  <div className="hbar-track rose">
+                    <i
+                      style={{
+                        width: `${(compare.current.accesos / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="hbar-val">{fmt(compare.current.accesos)}</span>
+                </div>
+                <div className="hbar-row">
+                  <span className="hbar-label">Online Ent. · Orbit</span>
+                  <div className="hbar-track">
+                    <i
+                      style={{
+                        width: `${(compare.current.orbit / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="hbar-val">{fmt(compare.current.orbit)}</span>
+                </div>
+              </div>
+              <Spark days={cur.by_day} />
+              <div className="alert critical">
+                Ritmo actual ≈ {pct(compare.burn_ratio * 100)} del burn/día del mes que se comió
+                casi todo el cupo. MCP sigue siendo casi la mitad.
               </div>
             </div>
           </div>
@@ -222,80 +341,98 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
       ),
     },
     {
-      id: 'ahrefs-spend',
-      title: 'Gasto Ahrefs',
+      id: 'users-agents',
+      title: 'Usuarios y canales',
       node: (
         <section className="slide">
-          <span className="kicker">
-            Standard 2022 · créditos UI ≠ API units
-          </span>
+          <span className="kicker">Token creator · user agent · scope</span>
           <h2>
-            Dos medidores, <span className="neon">un presupuesto</span>
+            Quién gasta y <span className="neon-rose">con qué</span>
           </h2>
-          <div className="grid-2">
-            <div className="stack">
-              <div className="panel">
-                <h3>1 · API units (workspace)</h3>
-                <div className="stat">
-                  <span className="value neon" style={{ fontSize: '1.6rem' }}>
-                    {fmt(api.units_usage_workspace)} / {fmt(api.units_limit_workspace)}
-                  </span>
-                  <span className="hint">
-                    {pct(api.pct_workspace)} · Orbit {fmt(api.units_usage_api_key)} (
-                    {pct(api.pct_this_key_of_workspace)}) · otras keys/MCP{' '}
-                    {fmt(api.units_usage_other_keys_or_ui)}
-                  </span>
-                  <Bar value={api.units_usage_workspace ?? 0} max={api.units_limit_workspace ?? 1} />
-                </div>
+          <div className="grid-3">
+            <div className="panel stack">
+              <h3>Cuentas Ahrefs</h3>
+              <div className="alert warning" style={{ fontSize: '0.82rem' }}>
+                <strong>Accesos SeoLab</strong>
+                <br />
+                {logs.meta.users.accesos.email} · {logs.meta.users.accesos.role}
+                <br />
+                {logs.meta.users.accesos.channel}
               </div>
-              <div className="panel">
-                <h3>2 · Créditos UI (por usuario)</h3>
-                <p className="lead" style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-                  {credits?.credits_rule}
-                </p>
-                <div className="split-metric">
-                  {(credits?.current_users ?? []).map((u) => (
-                    <div className="stat" key={u.user}>
-                      <span className="label">{u.user}</span>
-                      <span className="value" style={{ fontSize: '1.2rem' }}>
-                        {fmt(u.credits_used)}
-                        {u.limit != null ? ` / ${fmt(u.limit)}` : ''}
-                      </span>
-                      <span className="hint">
-                        {u.tier} · ~${u.implied_charge_usd}/mes
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="chips" style={{ marginTop: '0.55rem' }}>
-                  {(credits?.user_tiers_legacy_standard ?? []).map((t) => (
-                    <span className="chip" key={t.tier}>
-                      {t.tier} {t.credits} → ${t.charge_usd}
-                    </span>
-                  ))}
-                </div>
+              <div className="alert" style={{ fontSize: '0.82rem' }}>
+                <strong>Online Enterprises LLC</strong> (Esteban)
+                <br />
+                {logs.meta.users.esteban.email} · {logs.meta.users.esteban.role}
+                <br />
+                {logs.meta.users.esteban.channel}
               </div>
+              <h3>Scope ciclo actual</h3>
+              <HBars items={cur.by_scope} tone="amber" />
             </div>
             <div className="panel stack">
-              <h3>Dónde se va + reglas del plan</h3>
-              <ul className="list">
-                {(spend?.drivers ?? []).slice(0, 3).map((d, i) => (
-                  <li key={d.title}>
-                    <span className="n">0{i + 1}</span>
-                    <span>
-                      <strong style={{ color: 'var(--ink)' }}>{d.title}</strong> — {d.detail}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <div className="alert">
-                Pay-as-you-go créditos <strong>off</strong> (bien). Incluye 1 Power user / 600 cr.
-                Brand Radar ~{fmt(brandRadar?.used_approx)}/{fmt(brandRadar?.limit)} es un 3.er
-                cupo.
+              <h3>Agentes · mes anterior</h3>
+              <HBars items={prev.by_agent.slice(0, 5)} tone="rose" />
+            </div>
+            <div className="panel stack">
+              <h3>Agentes · ciclo actual</h3>
+              <HBars items={cur.by_agent.slice(0, 5)} />
+              <div className="alert critical">
+                OpenAI MCP: {fmt(prev.by_agent.find((a) => a.name.includes('OpenAI'))?.units)} units
+                el mes pasado. Una sola familia de user-agent.
               </div>
-              <span className="mono" style={{ color: 'var(--dim)', fontSize: '0.72rem' }}>
-                help.ahrefs.com · usage-based pricing · credit-based plans
-              </span>
+            </div>
+          </div>
+        </section>
+      ),
+    },
+    {
+      id: 'endpoints-geo',
+      title: 'Endpoints e IP',
+      node: (
+        <section className="slide">
+          <span className="kicker">Endpoints caros · origen de red</span>
+          <h2>
+            Dónde pega y <span className="neon">desde dónde</span>
+          </h2>
+          <div className="grid-2">
+            <div className="panel stack">
+              <h3>Top endpoints · ciclo actual</h3>
+              <HBars items={cur.by_endpoint} tone="rose" />
+              <h3 style={{ marginTop: '0.4rem' }}>Región / IP (units)</h3>
+              <HBars items={cur.by_region} />
+            </div>
+            <div className="panel stack">
+              <h3>Top llamadas (units)</h3>
+              <table className="mini-table">
+                <thead>
+                  <tr>
+                    <th>Units</th>
+                    <th>Quién</th>
+                    <th>Canal</th>
+                    <th>Endpoint</th>
+                    <th>Origen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cur.top_calls.slice(0, 6).map((c, i) => (
+                    <tr key={`${c.at}-${i}`}>
+                      <td className="danger">{fmt(c.units)}</td>
+                      <td>{c.creator.includes('Accesos') ? 'Accesos' : 'Orbit'}</td>
+                      <td>{c.agent.replace('MCP · ', '').replace('Orbit · ', '')}</td>
+                      <td className="mono" style={{ fontSize: '0.7rem' }}>
+                        {c.endpoint}
+                      </td>
+                      <td>
+                        {c.ip_hint.flag} {c.ip_hint.country}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="alert warning">
+                matching-terms a 13.250 × 2 el 13 jul = 26.500 units en segundos · scope{' '}
+                <span className="mono">apiv3-mcp</span> · sin IP.
+              </div>
             </div>
           </div>
         </section>
@@ -306,40 +443,37 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
       title: 'MCP',
       node: (
         <section className="slide">
-          <span className="kicker">Recomendaciones MCP · Ahrefs</span>
+          <span className="kicker">Reglas con datos reales</span>
           <h2>
-            MCP útil, <span className="neon-rose">con techo</span>
+            MCP: útil, <span className="neon-rose">ya demostrado caro</span>
           </h2>
-          <p className="lead" style={{ marginTop: '-0.35rem' }}>
-            {mcp?.principle}
-          </p>
           <div className="grid-2">
-            <div className="panel">
-              <h3>Reglas para el equipo</h3>
+            <div className="panel stack">
+              <h3>Hechos del CSV</h3>
               <ul className="list">
-                {(mcp?.rules ?? []).map((r, i) => (
-                  <li key={r}>
+                {logs.attack.bullets.map((b, i) => (
+                  <li key={b}>
                     <span className="n">0{i + 1}</span>
-                    <span>{r}</span>
+                    <span>{b}</span>
                   </li>
                 ))}
               </ul>
             </div>
             <div className="stack">
               <div className="panel">
-                <h3>Acciones inmediatas</h3>
+                <h3>Reglas inmediatas</h3>
                 <ul className="list">
-                  {(mcp?.actions ?? []).map((a, i) => (
-                    <li key={a}>
+                  {(mcp?.rules ?? []).slice(0, 5).map((r, i) => (
+                    <li key={r}>
                       <span className="n">0{i + 1}</span>
-                      <span>{a}</span>
+                      <span>{r}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="alert">
-                Docs Ahrefs: MCP gasta el mismo cupo de API units. Cada conexión crea una key con
-                scope MCP — se puede limitar por key.
+              <div className="alert critical">
+                Acción: tope mensual en la key MCP de Accesos SeoLab. Separar Claude / OpenAI /
+                Codex. Orbit (info@) con techo propio.
               </div>
             </div>
           </div>
@@ -351,7 +485,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
       title: 'Política',
       node: (
         <section className="slide">
-          <span className="kicker">Control · costo · excepciones · fuentes</span>
+          <span className="kicker">Control · costo · MCP · monitoreo</span>
           <h2>
             Un marco, <span className="neon">cuatro pilares</span>
           </h2>
@@ -370,58 +504,9 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
               </div>
             ))}
           </div>
-        </section>
-      ),
-    },
-    {
-      id: 'ops',
-      title: 'Operación',
-      node: (
-        <section className="slide">
-          <span className="kicker">Rol · terceros · protocolo</span>
-          <h2>
-            Cómo respondemos al <span className="neon-rose">gasto fantasma</span>
-          </h2>
-          <div className="grid-3">
-            <div className="panel stack">
-              <h3>Osward (monitoreo)</h3>
-              <ul className="list">
-                {(data.ops?.owner_duties ?? []).map((x, i) => (
-                  <li key={x}>
-                    <span className="n">0{i + 1}</span>
-                    <span>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="panel stack">
-              <h3>Esteban · tools / IDEs</h3>
-              <ul className="list">
-                {data.policy.third_party_tools.topics.map((t, i) => (
-                  <li key={t}>
-                    <span className="n">0{i + 1}</span>
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="panel stack">
-              <h3>Si cae el saldo y el log está vacío</h3>
-              <ul className="list">
-                {data.policy.monitoring.unidentified_spend_protocol.map((s, i) => (
-                  <li key={s}>
-                    <span className="n">0{i + 1}</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
           <div className="alert">
-            Umbrales Ahrefs API: {data.policy.monitoring.thresholds_ahrefs_api_pct.moderate}% ·{' '}
-            {data.policy.monitoring.thresholds_ahrefs_api_pct.warning}% ·{' '}
-            {data.policy.monitoring.thresholds_ahrefs_api_pct.critical}% — hoy{' '}
-            <strong className="neon">{pct(api.pct_workspace)}</strong>
+            Créditos UI hoy: SeoLab 41 → Casual ~$20 · Online Ent. 12 → Casual ~$20 · API{' '}
+            {pct(api.pct_workspace)} del cupo · pay-as-you-go off.
           </div>
         </section>
       ),
@@ -431,25 +516,54 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
       title: 'Acciones',
       node: (
         <section className="slide">
-          <span className="kicker">Qué pedimos cerrar esta semana</span>
+          <span className="kicker">Esta semana</span>
           <h2>
-            Decisiones, no <span className="neon-lime">más slides</span>
+            Decisiones con <span className="neon-lime">dueño</span>
           </h2>
           <div className="grid-3">
-            {(data.next_actions ?? []).map((a, i) => (
-              <div className="panel stack" key={a.title}>
+            {[
+              {
+                t: 'Tope key Accesos MCP',
+                d: 'Cap mensual duro en Ahrefs → API keys para Accesos SeoLab. Sin techo = otro mes a 400k.',
+                o: 'Osward + Esteban',
+              },
+              {
+                t: 'Prohibir matching-terms masivo',
+                d: 'limit bajo + keywords acotadas. 13k units/call no es investigación: es incendio.',
+                o: 'Equipo MCP',
+              },
+              {
+                t: 'Orbit con presupuesto',
+                d: 'Techo en Online Enterprises / proxy. organic-keywords y top-pages con cache estricto.',
+                o: 'Osward',
+              },
+              {
+                t: 'Inventario de MCP clients',
+                d: 'Claude / OpenAI / Codex conectados a Accesos — quién, para qué, revocar huérfanos.',
+                o: 'Esteban',
+              },
+              {
+                t: 'Cerrar Semrush',
+                d: 'Panel actividad + soporte con saldos 36k / 20,3k / 100.',
+                o: 'Gestión',
+              },
+              {
+                t: 'Proxy obligatorio clientes',
+                d: 'Trabajo de clientes por Orbit. MCP solo con excepción y techo.',
+                o: 'Equipo',
+              },
+            ].map((a, i) => (
+              <div className="panel stack" key={a.t}>
                 <span className="mono neon" style={{ fontSize: '0.8rem' }}>
                   0{i + 1}
                 </span>
-                <h3>{a.title}</h3>
-                <p className="lead" style={{ fontSize: '0.92rem' }}>
-                  {a.detail}
+                <h3>{a.t}</h3>
+                <p className="lead" style={{ fontSize: '0.88rem' }}>
+                  {a.d}
                 </p>
-                {a.owner && (
-                  <span className="chip hot" style={{ width: 'fit-content' }}>
-                    {a.owner}
-                  </span>
-                )}
+                <span className="chip hot" style={{ width: 'fit-content' }}>
+                  {a.o}
+                </span>
               </div>
             ))}
           </div>
@@ -463,11 +577,11 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
         <section className="slide">
           <span className="kicker">Cierre</span>
           <h1>
-            Proxy + techos + <span className="neon">dueños</span>
+            Accesos MCP quemó el mes. <span className="neon">Orbit también gasta</span> — con log.
           </h1>
           <p className="lead">
-            Semrush: casi todo el gasto fue invisible. Ahrefs: ~54% Orbit, ~46% fuera de esa key
-            (UI / otras keys / MCP). La regla: si gasta units, debe tener dueño, límite y log.
+            Semrush: invisible. Ahrefs: el CSV nombra token, scope y user-agent. Techos por key +
+            proxy para clientes + MCP acotado.
           </p>
           <div className="hero-meta">
             <span>
