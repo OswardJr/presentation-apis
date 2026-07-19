@@ -118,6 +118,20 @@ export interface UsageData {
       next_steps: string[];
     };
   };
+  spend_analysis?: {
+    summary: string;
+    drivers: { title: string; detail: string }[];
+  };
+  mcp_policy?: {
+    principle: string;
+    rules: string[];
+    actions: string[];
+  };
+  policy_groups?: { title: string; items: string[] }[];
+  ops?: {
+    owner_duties: string[];
+  };
+  next_actions?: { title: string; detail: string; owner?: string }[];
   apis: ApiBlock[];
   policy: {
     goals: string[];

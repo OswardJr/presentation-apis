@@ -4,9 +4,9 @@
     "presenter": "Osward",
     "gestion": "Sebastian Castaño",
     "duration_minutes": 20,
-    "generated_at": "2026-07-19T06:05:00Z",
+    "generated_at": "2026-07-19T06:30:00Z",
     "docs_home": "Orbit",
-    "notes": "Snapshot estático para la presentación. Caso Semrush = informe interno 13 jul 2026 (Robert Virona / SeoLab). Actualizar Ahrefs con npm run refresh:ahrefs."
+    "notes": "Deck condensada (8 slides). Caso Semrush = informe 13 jul 2026. Gasto Ahrefs = API limits-and-usage + drivers Orbit. Actualizar: npm run refresh:ahrefs."
   },
   "trigger_case": {
     "provider": "semrush",
@@ -120,6 +120,118 @@
       "Ahrefs seguía saludable: la fuente principal no se cayó, el riesgo de modelo sí"
     ]
   },
+  "spend_analysis": {
+    "summary": "86.251 units de Ahrefs en el ciclo: ~54% esta key Orbit, ~46% otras keys/UI/MCP. La key Orbit no tiene tope mensual (null).",
+    "drivers": [
+      {
+        "title": "Orbit / ahrefs-api-proxy (~54%)",
+        "detail": "Agentes y sync: smart-report, keyword research, competitor analysis, content gap, forecasting, backlinks. Mín. 50 units/request."
+      },
+      {
+        "title": "Fuera de esa key (~46%)",
+        "detail": "Panel Ahrefs, otras API keys, conexiones MCP (scope MCP) e integraciones. Sin inventario de keys no hay dueño claro."
+      },
+      {
+        "title": "Costo estructural",
+        "detail": "Cada consulta de pago cuesta al menos 50 units; campos caros (5–10) y muchas filas multiplican. Sin select/limit el burn sube rápido."
+      },
+      {
+        "title": "Brand Radar (cupo aparte)",
+        "detail": "~7.200 / 300 comprobaciones de prompts: no es API units, pero muestra el mismo patrón de uso sin techo."
+      }
+    ]
+  },
+  "mcp_policy": {
+    "principle": "MCP de Ahrefs consume el mismo cupo de API units que la API directa. Un agente en bucle puede quemar miles de units en minutos.",
+    "rules": [
+      "Preferir datos ya cacheados en Orbit antes de preguntarle al MCP",
+      "Una pregunta = una consulta acotada (dominio/keyword concretos); prohibido barrer listas largas",
+      "En desarrollo: targets de prueba gratis de Ahrefs; nunca prod masivo",
+      "Pedir campos mínimos (select) y limit bajo; revisar costo antes de repetir",
+      "No compartir una key MCP ilimitada con todo el equipo",
+      "Si el flujo es de agencia/cliente: pasar por proxy Orbit (queda en log)"
+    ],
+    "actions": [
+      "Inventariar keys MCP en Ahrefs → Account settings → API keys",
+      "Poner tope mensual por key MCP (admins)",
+      "Revocar conexiones MCP que nadie use",
+      "Alinear con Esteban: qué IDEs pueden tener Ahrefs MCP y con qué techo"
+    ]
+  },
+  "policy_groups": [
+    {
+      "title": "Control y fuentes",
+      "items": [
+        "Orbit = fuente de verdad del consumo (monitores Leaders)",
+        "Keys de empresa = gasto de empresa, aunque dispare un IDE",
+        "GSC/GA4 fuera de foco de costo; Ahrefs/Semrush/OpenRouter sí"
+      ]
+    },
+    {
+      "title": "Costo y excepciones",
+      "items": [
+        "Cache 24h+, campos mínimos, pay-as-you-go off",
+        "Cap por API key; separar prod vs experimentos",
+        "Excepciones: Sebastian + Osward · Orbit · ventana temporal"
+      ]
+    },
+    {
+      "title": "MCP y terceros",
+      "items": [
+        "MCP con techo por key; preferir Orbit para trabajo de clientes",
+        "Esteban alinea IDEs / extensiones / llamadas directas",
+        "Llamada fuera del proxy = invisible (lección Semrush)"
+      ]
+    },
+    {
+      "title": "Monitoreo",
+      "items": [
+        "Osward vigila snapshots y call logs",
+        "Umbrales API Ahrefs: 50 / 75 / 90%",
+        "Saldo cae + log vacío → protocolo gasto fantasma"
+      ]
+    }
+  ],
+  "ops": {
+    "owner_duties": [
+      "Vigilar monitores Ahrefs / Semrush",
+      "Investigar picos con cifras",
+      "Proponer límites o rotar keys",
+      "Reportar a Sebastian con datos"
+    ]
+  },
+  "next_actions": [
+    {
+      "title": "Inventario de keys",
+      "detail": "Listar todas las keys Ahrefs/Semrush (API + MCP + integraciones), dueño y tope mensual.",
+      "owner": "Osward"
+    },
+    {
+      "title": "Techos MCP",
+      "detail": "Poner limit por key MCP; revocar las sin uso. Documentar reglas en Orbit.",
+      "owner": "Osward + Esteban"
+    },
+    {
+      "title": "Cerrar Semrush",
+      "detail": "Actividad en semrush.com + ¿quién más tenía la key? + ticket soporte con saldos 36k / 20,3k / 100.",
+      "owner": "Gestión"
+    },
+    {
+      "title": "Brand Radar",
+      "detail": "Identificar quién dispara ~7.200 comprobaciones vs plan 300 y cortar o ampliar con decisión explícita.",
+      "owner": "Osward"
+    },
+    {
+      "title": "Proxy obligatorio",
+      "detail": "Trabajo de clientes SEO vía Orbit/proxy. Directo solo con excepción registrada.",
+      "owner": "Equipo"
+    },
+    {
+      "title": "Recarga Semrush",
+      "detail": "Sin units no hay 2ª fuente ni Position Tracking. Decidir paquete + monitoreo diario post-recarga.",
+      "owner": "Sebastian"
+    }
+  ],
   "apis": [
     {
       "id": "ahrefs",
