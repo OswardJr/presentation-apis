@@ -1,15 +1,11 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { buildAgentBriefing, type AgentInsight, type InsightTone } from './agentBriefing';
 import type { AnalyticsData, LogBucket } from './analyticsTypes';
 import type { ApiBlock, UsageData } from './types';
 
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—';
   return n.toLocaleString('es-CO');
-}
-
-function pct(n: number | null | undefined): string {
-  if (n == null) return '—';
-  return `${n.toFixed(1)}%`;
 }
 
 function useDeckNavigation(total: number) {
@@ -81,6 +77,32 @@ function Spark({ days }: { days: { day: string; units: number }[] }) {
       ))}
     </div>
   );
+}
+
+const TONE_LABEL: Record<InsightTone, string> = {
+  calm: 'Lectura tranquila',
+  watch: 'Ojo con esto',
+  alert: 'Prioridad alta',
+};
+
+function AgentCard({ insight }: { insight: AgentInsight }) {
+  return (
+    <article className={`agent-card ${insight.tone}`}>
+      <div className="agent-card-head">
+        <div className="agent-avatar">AO</div>
+        <div className="agent-meta">
+          <span className="who">Analista Orbit</span>
+          <span className="tone">{TONE_LABEL[insight.tone]}</span>
+        </div>
+      </div>
+      <h3>{insight.title}</h3>
+      <p>{insight.body}</p>
+    </article>
+  );
+}
+
+function insightsFor(briefing: AgentInsight[], slide: string): AgentInsight[] {
+  return briefing.filter((i) => i.slide === slide);
 }
 
 export default function App() {
@@ -163,13 +185,15 @@ export default function App() {
   );
 }
 
-function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
-  const api = ahrefs.api!;
-  const credits = data.credits_model;
+function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
   const mcp = data.mcp_policy;
   const report = data.trigger_case.report;
   const { compare, current: cur, previous: prev } = logs;
   const maxUserPrev = Math.max(compare.previous.accesos, compare.previous.orbit, 1);
+  const briefing = buildAgentBriefing(data, logs);
+  const boardInsights = briefing.filter((i) =>
+    ['prev-month', 'orbit-vs-mcp', 'openai-burn', 'what-to-do'].includes(i.id),
+  );
 
   return [
     {
@@ -177,13 +201,13 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
       title: 'Portada',
       node: (
         <section className="slide">
-          <span className="kicker">Exposición · CSV Ahrefs · forense</span>
+          <span className="kicker">Exposición · con Analista Orbit</span>
           <h1>
             El gasto ya tiene <span className="neon-rose">nombre</span>
           </h1>
           <p className="lead">
-            Semrush fue el detonante. El CSV de Ahrefs separa dos mundos: MCP bajo Accesos (gasto
-            ad-hoc) vs Orbit bajo Esteban (inversión en módulos que cachean en Supabase).
+            Semrush nos despertó. Ahrefs nos mostró el detalle. Hoy separamos lo que se evapora en
+            chats de lo que Orbit guarda para reutilizar.
           </p>
           <div className="hero-meta">
             <span>
@@ -200,17 +224,31 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
       ),
     },
     {
+      id: 'agent',
+      title: 'Analista',
+      node: (
+        <section className="slide">
+          <span className="kicker">Agente · lectura humanizada</span>
+          <h2>
+            Lo que importa, <span className="neon">en claro</span>
+          </h2>
+          <div className="agent-board">
+            {boardInsights.map((insight) => (
+              <AgentCard key={insight.id} insight={insight} />
+            ))}
+          </div>
+        </section>
+      ),
+    },
+    {
       id: 'semrush',
       title: 'Caso Semrush',
       node: (
         <section className="slide">
-          <span className="kicker">Detonante · informe 13 jul 2026</span>
+          <span className="kicker">Detonante · 13 jul 2026</span>
           <h2>
             <span className="neon-rose">{fmt(report?.balance_start)}</span>
-            {' → 0 '}
-            <span style={{ color: 'var(--muted)', fontSize: '0.42em', fontWeight: 500 }}>
-              · 98,7% sin rastro
-            </span>
+            {' → 0'}
           </h2>
           <div className="grid-2">
             <div className="stack">
@@ -221,33 +259,22 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                     <span className="value neon-rose" style={{ fontSize: '1.5rem' }}>
                       {fmt(d.delta)}
                     </span>
-                    <span className="hint">{d.window} · sin log</span>
+                    <span className="hint">{d.window}</span>
                   </div>
                 ))}
               </div>
-              <div className="alert critical">
-                Lección: fuera del proxy = invisible. En Ahrefs el CSV sí deja Token creator +
-                scope MCP.
+              <div className="agent-inline">
+                {insightsFor(briefing, 'semrush').slice(0, 1).map((i) => (
+                  <AgentCard key={i.id} insight={i} />
+                ))}
               </div>
             </div>
-            <div className="panel stack">
-              <h3>Dos modelos de riesgo</h3>
-              <ul className="list">
-                <li>
-                  <span className="n">SM</span>
-                  <span>Semrush: prepago sin reset → se apaga en 0.</span>
-                </li>
-                <li>
-                  <span className="n">AH</span>
-                  <span>
-                    Ahrefs: créditos UI + API units. Y además scope <span className="mono">apiv3-mcp</span>.
-                  </span>
-                </li>
-                <li>
-                  <span className="n">!!</span>
-                  <span>{credits?.key_point}</span>
-                </li>
-              </ul>
+            <div className="stack" style={{ gap: '1rem' }}>
+              {insightsFor(briefing, 'semrush')
+                .slice(1)
+                .map((i) => (
+                  <AgentCard key={i.id} insight={i} />
+                ))}
             </div>
           </div>
         </section>
@@ -258,9 +285,9 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
       title: 'CSV comparativo',
       node: (
         <section className="slide">
-          <span className="kicker">Exports Ahrefs · API log</span>
+          <span className="kicker">Dos ciclos · mismos bolsillo</span>
           <h2>
-            Ciclo anterior vs <span className="neon">actual</span>
+            Antes y <span className="neon">ahora</span>
           </h2>
           <div className="grid-2">
             <div className="panel stack">
@@ -269,11 +296,11 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                 {fmt(compare.previous.units)}
               </div>
               <span className="hint" style={{ color: 'var(--muted)' }}>
-                {fmt(compare.previous.per_day)}/día · MCP {compare.previous.mcp_pct}%
+                {fmt(compare.previous.per_day)} al día · chats {compare.previous.mcp_pct}%
               </span>
               <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
                 <div className="hbar-row">
-                  <span className="hbar-label">Accesos · MCP ad-hoc</span>
+                  <span className="hbar-label">Chats (Accesos)</span>
                   <div className="hbar-track rose">
                     <i
                       style={{
@@ -284,7 +311,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                   <span className="hbar-val">{fmt(compare.previous.accesos)}</span>
                 </div>
                 <div className="hbar-row">
-                  <span className="hbar-label">Orbit · módulos + cache</span>
+                  <span className="hbar-label">Orbit (módulos)</span>
                   <div className="hbar-track">
                     <i
                       style={{
@@ -297,45 +324,46 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
               </div>
               <Spark days={prev.by_day} />
             </div>
-            <div className="panel stack">
-              <h3>Ciclo actual · {cur.period.label}</h3>
-              <div className="big-number neon" style={{ fontSize: '2.6rem' }}>
-                {fmt(compare.current.units)}
-              </div>
-              <span className="hint" style={{ color: 'var(--muted)' }}>
-                {fmt(compare.current.per_day)}/día · MCP {compare.current.mcp_pct}% ·{' '}
-                {compare.current.days} días
-              </span>
-              <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
-                <div className="hbar-row">
-                  <span className="hbar-label">Accesos · MCP ad-hoc</span>
-                  <div className="hbar-track rose">
-                    <i
-                      style={{
-                        width: `${(compare.current.accesos / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <span className="hbar-val">{fmt(compare.current.accesos)}</span>
+            <div className="stack" style={{ gap: '0.85rem' }}>
+              <div className="panel stack">
+                <h3>Ciclo actual · {cur.period.label}</h3>
+                <div className="big-number neon" style={{ fontSize: '2.2rem' }}>
+                  {fmt(compare.current.units)}
                 </div>
-                <div className="hbar-row">
-                  <span className="hbar-label">Orbit · módulos + cache</span>
-                  <div className="hbar-track">
-                    <i
-                      style={{
-                        width: `${(compare.current.orbit / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
-                      }}
-                    />
+                <span className="hint" style={{ color: 'var(--muted)' }}>
+                  {fmt(compare.current.per_day)} al día · {compare.current.days} días
+                </span>
+                <div className="hbar-list" style={{ marginTop: '0.45rem' }}>
+                  <div className="hbar-row">
+                    <span className="hbar-label">Chats (Accesos)</span>
+                    <div className="hbar-track rose">
+                      <i
+                        style={{
+                          width: `${(compare.current.accesos / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="hbar-val">{fmt(compare.current.accesos)}</span>
                   </div>
-                  <span className="hbar-val">{fmt(compare.current.orbit)}</span>
+                  <div className="hbar-row">
+                    <span className="hbar-label">Orbit (módulos)</span>
+                    <div className="hbar-track">
+                      <i
+                        style={{
+                          width: `${(compare.current.orbit / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="hbar-val">{fmt(compare.current.orbit)}</span>
+                  </div>
                 </div>
+                <Spark days={cur.by_day} />
               </div>
-              <Spark days={cur.by_day} />
-              <div className="alert">
-                Orbit puede liderar units este ciclo: es <strong>preparación de módulos</strong> que
-                guardan en Supabase para no reconsultar. El problema a atacar es MCP ad-hoc sin
-                cache ni techo.
-              </div>
+              {insightsFor(briefing, 'csv-compare')
+                .filter((i) => i.id === 'orbit-vs-mcp')
+                .map((i) => (
+                  <AgentCard key={i.id} insight={i} />
+                ))}
             </div>
           </div>
         </section>
@@ -346,41 +374,32 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
       title: 'Usuarios y canales',
       node: (
         <section className="slide">
-          <span className="kicker">Token creator · user agent · scope</span>
+          <span className="kicker">Quién abre cada puerta</span>
           <h2>
-            Mismo cupo, <span className="neon">dos lógicas</span>
+            Mismo bolsillo, <span className="neon">dos formas de gastar</span>
           </h2>
-          <div className="grid-3">
-            <div className="panel stack">
-              <h3>Cuentas Ahrefs</h3>
-              <div className="alert warning" style={{ fontSize: '0.82rem' }}>
-                <strong>Accesos SeoLab</strong>
-                <br />
-                {logs.meta.users.accesos.email} · {logs.meta.users.accesos.role}
-                <br />
-                MCP ad-hoc · sin persistir en Orbit
-              </div>
-              <div className="alert" style={{ fontSize: '0.82rem' }}>
-                <strong>Online Enterprises LLC</strong> (Esteban)
-                <br />
-                {logs.meta.users.esteban.email} · {logs.meta.users.esteban.role}
-                <br />
-                Orbit · sync a Supabase · reutilizable
-              </div>
-              <h3>Scope ciclo actual</h3>
-              <HBars items={cur.by_scope} tone="amber" />
+          <div className="grid-2">
+            <div className="stack" style={{ gap: '1rem' }}>
+              {insightsFor(briefing, 'users-agents').map((i) => (
+                <AgentCard key={i.id} insight={i} />
+              ))}
             </div>
             <div className="panel stack">
-              <h3>Agentes · mes anterior</h3>
-              <HBars items={prev.by_agent.slice(0, 5)} tone="rose" />
-            </div>
-            <div className="panel stack">
-              <h3>Agentes · ciclo actual</h3>
-              <HBars items={cur.by_agent.slice(0, 5)} />
-              <div className="alert critical">
-                OpenAI MCP: {fmt(prev.by_agent.find((a) => a.name.includes('OpenAI'))?.units)} units
-                el mes pasado — gasto que no quedó en BD de Orbit.
-              </div>
+              <h3>De dónde vino el gasto (mes anterior)</h3>
+              <HBars
+                items={prev.by_agent.slice(0, 4).map((a) => ({
+                  ...a,
+                  name: a.name
+                    .replace('MCP · ', 'Chat · ')
+                    .replace('Orbit · ', 'Orbit · '),
+                }))}
+                tone="rose"
+              />
+              <p className="lead" style={{ fontSize: '0.9rem', marginTop: '0.75rem' }}>
+                Accesos → {logs.meta.users.accesos.email}
+                <br />
+                Orbit / Esteban → {logs.meta.users.esteban.email}
+              </p>
             </div>
           </div>
         </section>
@@ -388,52 +407,32 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
     },
     {
       id: 'endpoints-geo',
-      title: 'Endpoints e IP',
+      title: 'Dónde duele',
       node: (
         <section className="slide">
-          <span className="kicker">Endpoints caros · origen de red</span>
+          <span className="kicker">Consultas caras · origen</span>
           <h2>
-            Dónde pega y <span className="neon">desde dónde</span>
+            Qué preguntamos y <span className="neon-rose">cuánto cuesta</span>
           </h2>
           <div className="grid-2">
-            <div className="panel stack">
-              <h3>Top endpoints · ciclo actual</h3>
-              <HBars items={cur.by_endpoint} tone="rose" />
-              <h3 style={{ marginTop: '0.4rem' }}>Región / IP (units)</h3>
-              <HBars items={cur.by_region} />
+            <div className="stack" style={{ gap: '1rem' }}>
+              {insightsFor(briefing, 'endpoints-geo').map((i) => (
+                <AgentCard key={i.id} insight={i} />
+              ))}
             </div>
             <div className="panel stack">
-              <h3>Top llamadas (units)</h3>
-              <table className="mini-table">
-                <thead>
-                  <tr>
-                    <th>Units</th>
-                    <th>Quién</th>
-                    <th>Canal</th>
-                    <th>Endpoint</th>
-                    <th>Origen</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cur.top_calls.slice(0, 6).map((c, i) => (
-                    <tr key={`${c.at}-${i}`}>
-                      <td className="danger">{fmt(c.units)}</td>
-                      <td>{c.creator.includes('Accesos') ? 'Accesos' : 'Orbit'}</td>
-                      <td>{c.agent.replace('MCP · ', '').replace('Orbit · ', '')}</td>
-                      <td className="mono" style={{ fontSize: '0.7rem' }}>
-                        {c.endpoint}
-                      </td>
-                      <td>
-                        {c.ip_hint.flag} {c.ip_hint.country}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="alert warning">
-                matching-terms a 13.250 × 2 el 13 jul = 26.500 units en segundos · scope{' '}
-                <span className="mono">apiv3-mcp</span> · sin IP.
-              </div>
+              <h3>Lo más caro este ciclo</h3>
+              <HBars
+                items={cur.by_endpoint.slice(0, 5).map((e) => ({
+                  ...e,
+                  name: e.name
+                    .replace('keywords-explorer/', 'keywords · ')
+                    .replace('site-explorer/', 'sitio · '),
+                }))}
+                tone="rose"
+              />
+              <h3 style={{ marginTop: '0.85rem' }}>Desde dónde</h3>
+              <HBars items={cur.by_region.slice(0, 4)} />
             </div>
           </div>
         </section>
@@ -441,73 +440,43 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
     },
     {
       id: 'mcp',
-      title: 'MCP',
+      title: 'Cómo usar chats',
       node: (
         <section className="slide">
-          <span className="kicker">Reglas con datos reales</span>
+          <span className="kicker">Reglas simples</span>
           <h2>
-            MCP: útil, <span className="neon-rose">ya demostrado caro</span>
+            Los chats ayudan — <span className="neon-rose">con límite</span>
           </h2>
           <div className="grid-2">
+            <div className="stack" style={{ gap: '1rem' }}>
+              <AgentCard
+                insight={{
+                  id: 'mcp-human',
+                  tone: 'watch',
+                  title: 'Cómo pedir datos sin vaciar el tanque',
+                  body: 'Una pregunta = un dominio o unas pocas keywords. No “dame todo el mercado”. Si Orbit ya tiene el módulo, ábrelo ahí: ya pagamos esa información una vez.',
+                }}
+              />
+              <AgentCard
+                insight={{
+                  id: 'mcp-cap',
+                  tone: 'alert',
+                  title: 'Lo que hay que hacer ya',
+                  body: 'Poner un tope mensual a la llave de Accesos. Separar quién usa Claude, OpenAI o Codex. Sin techo, el mes pasado se puede repetir.',
+                }}
+              />
+            </div>
             <div className="panel stack">
-              <h3>Hechos del CSV</h3>
+              <h3>Acuerdos del equipo</h3>
               <ul className="list">
-                {logs.attack.bullets.map((b, i) => (
-                  <li key={b}>
+                {(mcp?.rules ?? []).slice(0, 5).map((r, i) => (
+                  <li key={r}>
                     <span className="n">0{i + 1}</span>
-                    <span>{b}</span>
+                    <span>{r}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="stack">
-              <div className="panel">
-                <h3>Reglas inmediatas</h3>
-                <ul className="list">
-                  {(mcp?.rules ?? []).slice(0, 5).map((r, i) => (
-                    <li key={r}>
-                      <span className="n">0{i + 1}</span>
-                      <span>{r}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="alert critical">
-                Acción: tope en key MCP Accesos + preferir Orbit (cache Supabase). Orbit se
-                monitorea, no se criminaliza: es inversión de plataforma.
-              </div>
-            </div>
-          </div>
-        </section>
-      ),
-    },
-    {
-      id: 'policy',
-      title: 'Política',
-      node: (
-        <section className="slide">
-          <span className="kicker">Control · costo · MCP · monitoreo</span>
-          <h2>
-            Un marco, <span className="neon">cuatro pilares</span>
-          </h2>
-          <div className="grid-2">
-            {(data.policy_groups ?? []).map((g) => (
-              <div className="panel stack" key={g.title}>
-                <h3>{g.title}</h3>
-                <ul className="list">
-                  {g.items.map((item, i) => (
-                    <li key={item}>
-                      <span className="n">0{i + 1}</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="alert">
-            Créditos UI hoy: SeoLab 41 → Casual ~$20 · Online Ent. 12 → Casual ~$20 · API{' '}
-            {pct(api.pct_workspace)} del cupo · pay-as-you-go off.
           </div>
         </section>
       ),
@@ -521,36 +490,41 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
           <h2>
             Decisiones con <span className="neon-lime">dueño</span>
           </h2>
+          <div className="agent-inline" style={{ marginBottom: '0.85rem' }}>
+            {insightsFor(briefing, 'actions').map((i) => (
+              <AgentCard key={i.id} insight={i} />
+            ))}
+          </div>
           <div className="grid-3">
             {[
               {
-                t: 'Tope key Accesos MCP',
-                d: 'Cap mensual duro en Ahrefs → API keys para Accesos SeoLab. Sin techo = otro mes a 400k.',
+                t: 'Tope a la llave de Accesos',
+                d: 'Así un chat no se puede comer el mes entero otra vez.',
                 o: 'Osward + Esteban',
               },
               {
-                t: 'Prohibir matching-terms masivo',
-                d: 'limit bajo + keywords acotadas. 13k units/call no es investigación: es incendio.',
-                o: 'Equipo MCP',
-              },
-              {
-                t: 'Orbit = vía preferida',
-                d: 'Módulos ya persisten en Supabase. Trabajo de clientes por Orbit; MCP solo si Orbit no cubre el caso.',
+                t: 'No barrer keywords a lo loco',
+                d: 'Listas cortas. Una consulta de 13 mil unidades no es investigar: es un incendio.',
                 o: 'Equipo',
               },
               {
-                t: 'Inventario de MCP clients',
-                d: 'Claude / OpenAI / Codex en Accesos — quién, para qué, revocar huérfanos.',
+                t: 'Preferir Orbit',
+                d: 'El trabajo de clientes vive donde ya guardamos datos en Supabase.',
+                o: 'Equipo',
+              },
+              {
+                t: 'Revisar quién tiene chats conectados',
+                d: 'Claude, OpenAI, Codex: quién, para qué, y apagar lo que no se use.',
                 o: 'Esteban',
               },
               {
-                t: 'Cerrar Semrush',
-                d: 'Panel actividad + soporte con saldos 36k / 20,3k / 100.',
+                t: 'Cerrar el caso Semrush',
+                d: 'Preguntar en Semrush qué pasó esos tres días y quién más tenía la llave.',
                 o: 'Gestión',
               },
               {
-                t: 'Techo Orbit (salud)',
-                d: 'Alertas si un sync de módulo se dispara sin necesidad; no frenar preparación legítima.',
+                t: 'Cuidar Orbit sin frenarlo',
+                d: 'Avisar si un sync se dispara de más; la preparación de módulos sigue siendo bienvenida.',
                 o: 'Osward',
               },
             ].map((a, i) => (
@@ -559,7 +533,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                   0{i + 1}
                 </span>
                 <h3>{a.t}</h3>
-                <p className="lead" style={{ fontSize: '0.88rem' }}>
+                <p className="lead" style={{ fontSize: '0.92rem' }}>
                   {a.d}
                 </p>
                 <span className="chip hot" style={{ width: 'fit-content' }}>
@@ -577,14 +551,12 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
       node: (
         <section className="slide">
           <span className="kicker">Cierre</span>
-          <h1>
-            Atacar MCP ad-hoc. <span className="neon">Orbit invierte y cachea</span>.
-          </h1>
-          <p className="lead">
-            Units en Orbit preparan módulos y viven en Supabase. Units en MCP Accesos se evaporan
-            sin reutilizar. Techo al MCP; Orbit como vía preferida.
-          </p>
-          <div className="hero-meta">
+          <div style={{ maxWidth: '40rem', display: 'grid', gap: '1.25rem' }}>
+            {insightsFor(briefing, 'close').map((i) => (
+              <AgentCard key={i.id} insight={i} />
+            ))}
+          </div>
+          <div className="hero-meta" style={{ marginTop: '1.5rem' }}>
             <span>
               Preguntas → <strong>{data.meta.presenter}</strong>
             </span>
