@@ -4,58 +4,72 @@
 
 ---
 
-## Hallazgo estrella (memorizar)
+## Narrativa correcta (importante)
+
+**Orbit (Online Enterprises / Esteban / info@)** gasta units al **preparar módulos**. Muchos de esos flujos **ya guardan en Supabase** para no volver a pegarle a Ahrefs. Eso es inversión de plataforma + cache — se monitorea, no se trata como desperdicio.
+
+**Accesos SeoLab (MCP)** gasta en consultas ad-hoc (Claude / OpenAI / Codex) que **no dejan el mismo activo reutilizable** en Orbit. Ese fue el burn del mes anterior (60%).
+
+Frase ancla:
+> “No es Orbit vs el equipo. Es gasto que se cachea vs gasto que se evapora.”
+
+---
+
+## Números
 
 | | Mes anterior (11 jun–11 jul) | Ciclo actual (11–19 jul) |
 |---|---|---|
 | **Total API units** | **406.833** | **86.251** |
 | **/día** | 13.561 | 10.781 |
 | **MCP %** | **60%** | **46%** |
-| **Accesos SeoLab** (MCP) | **244.492** | **39.878** |
-| **Online Enterprises** (Orbit/Esteban) | 162.341 | **46.373** |
+| **Accesos · MCP** | **244.492** | **39.878** |
+| **Orbit · módulos** | 162.341 | **46.373** |
 
-- Accesos = `accesos@seolabagency.com` · Miembro · Claude / OpenAI / Codex MCP  
-- Online Ent. = `info@seolabagency.com` · Propietario · Esteban · Orbit/Supabase  
-- Llamada asesina: `keywords-explorer/matching-terms` → **13.250 units** (MCP, sin IP)
+- Accesos = `accesos@seolabagency.com` · Miembro · MCP  
+- Orbit = `info@seolabagency.com` · Propietario · Esteban · Supabase Edge  
+- Asesino MCP: `matching-terms` → **13.250 units/call**
 
 ---
 
 ## 1. Portada
-> “El gasto ya tiene nombre. Semrush fue el detonante; el CSV de Ahrefs muestra el resto.”
+> “El CSV separa dos mundos: MCP ad-hoc bajo Accesos vs Orbit que invierte y cachea en Supabase.”
 
 ## 2. Semrush (breve)
-36.370 → 0 · 98,7% invisible. Contraste: Semrush sin log vs Ahrefs con Token creator + scope MCP.
+36.370 → 0 · 98,7% invisible. Ahrefs al menos deja Token creator + scope.
 
-## 3. CSV comparativo (3 min) — atacar
-> “El mes pasado nos comimos 406 mil units. Accesos MCP solo: 244 mil — el 60%. OpenAI MCP lideró.”
+## 3. CSV comparativo (3 min)
+> “El mes pasado: 406 mil. Accesos MCP solo 244 mil — 60%. OpenAI MCP lideró.”
 
-> “Este ciclo, en 8 días, ya van 86 mil a ~10.800/día — el 80% del ritmo del mes que se evaporó. Orbit ahora lidera por poco, pero MCP sigue en 40 mil.”
+Si Orbit lidera este ciclo:
+> “Puede verse alto — es preparación de módulos. La diferencia es que ese dato queda en Supabase. MCP no.”
 
-Mostrar sparks / barras.
+## 4. Dos lógicas (2.5 min)
+Nombrar emails.  
+> “Mismo cupo, dos lógicas: Orbit reutiliza; MCP consume y listo.”
 
-## 4. Usuarios y canales (2.5 min)
-Nombrar emails y roles. Scope `apiv3-mcp` vs `apiv3`.  
-> “No es ‘la API de la empresa’ en abstracto: es Accesos con OpenAI MCP y Esteban con Orbit.”
-
-## 5. Endpoints + IP (2.5 min)
-matching-terms, organic-keywords, top-pages.  
-> “MCP no deja IP — satélite. Orbit deja AWS US Supabase. LatAm solo aparece en lecturas de saldo a 0 units.”
-
-Dos matching-terms el 13 jul = 26.500 units.
+## 5. Endpoints + IP (2 min)
+matching-terms / organic-keywords. MCP sin IP; Orbit AWS US.  
+> “Cortamos el patrón MCP caro. Orbit lo afinamos con cache, no lo apagamos.”
 
 ## 6. MCP reglas (2 min)
-Techo en key Accesos. Prohibir matching-terms masivo. Separar clientes MCP. Proxy para clientes.
+Techo Accesos. Preferir Orbit. matching-terms con limit.  
+> “Orbit se monitorea; MCP se techa.”
 
 ## 7. Política (1.5 min)
-4 pilares + créditos UI Casual $20 ambos usuarios.
+4 pilares + créditos UI Casual ambos.
 
 ## 8. Acciones (2 min)
-Dueños en voz alta: tope Accesos, ban matching-terms masivo, techo Orbit, inventario MCP, Semrush, proxy.
+1. Tope key Accesos MCP  
+2. Prohibir matching-terms masivo  
+3. Orbit = vía preferida (cache)  
+4. Inventario MCP clients (Esteban)  
+5. Cerrar Semrush  
+6. Alertas Orbit si sync innecesario — sin frenar prep legítima  
 
 ## 9. Cierre
-> “Accesos MCP quemó el mes. Orbit también gasta — pero con log. Techos por key.”
+> “Atacar MCP ad-hoc. Orbit invierte y cachea. Techo al primero; preferir el segundo.”
 
 ---
 
-## Si preguntan “¿culpa de Esteban?”
-Orbit gasta (Supabase Edge, organic-keywords). Es trabajo de plataforma. El burn descontrolado del mes anterior fue **mayoritariamente MCP bajo Accesos**, no el panel UI.
+## Si preguntan “¿entonces Esteban / Orbit también?”
+Sí gasta — en sync de módulos. Muchos resultados ya están en BD. Eso baja reconsultas futuras. El incendio del ciclo anterior fue **MCP Accesos**, no “Orbit sin control”.

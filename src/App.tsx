@@ -182,8 +182,8 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
             El gasto ya tiene <span className="neon-rose">nombre</span>
           </h1>
           <p className="lead">
-            Semrush fue el detonante. Los exports de Ahrefs muestran el resto: MCP bajo Accesos
-            SeoLab vs Orbit bajo Esteban (Online Enterprises).
+            Semrush fue el detonante. El CSV de Ahrefs separa dos mundos: MCP bajo Accesos (gasto
+            ad-hoc) vs Orbit bajo Esteban (inversión en módulos que cachean en Supabase).
           </p>
           <div className="hero-meta">
             <span>
@@ -273,7 +273,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
               </span>
               <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
                 <div className="hbar-row">
-                  <span className="hbar-label">Accesos · MCP</span>
+                  <span className="hbar-label">Accesos · MCP ad-hoc</span>
                   <div className="hbar-track rose">
                     <i
                       style={{
@@ -284,7 +284,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                   <span className="hbar-val">{fmt(compare.previous.accesos)}</span>
                 </div>
                 <div className="hbar-row">
-                  <span className="hbar-label">Online Ent. · Orbit</span>
+                  <span className="hbar-label">Orbit · módulos + cache</span>
                   <div className="hbar-track">
                     <i
                       style={{
@@ -308,7 +308,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
               </span>
               <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
                 <div className="hbar-row">
-                  <span className="hbar-label">Accesos · MCP</span>
+                  <span className="hbar-label">Accesos · MCP ad-hoc</span>
                   <div className="hbar-track rose">
                     <i
                       style={{
@@ -319,7 +319,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                   <span className="hbar-val">{fmt(compare.current.accesos)}</span>
                 </div>
                 <div className="hbar-row">
-                  <span className="hbar-label">Online Ent. · Orbit</span>
+                  <span className="hbar-label">Orbit · módulos + cache</span>
                   <div className="hbar-track">
                     <i
                       style={{
@@ -331,9 +331,10 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                 </div>
               </div>
               <Spark days={cur.by_day} />
-              <div className="alert critical">
-                Ritmo actual ≈ {pct(compare.burn_ratio * 100)} del burn/día del mes que se comió
-                casi todo el cupo. MCP sigue siendo casi la mitad.
+              <div className="alert">
+                Orbit puede liderar units este ciclo: es <strong>preparación de módulos</strong> que
+                guardan en Supabase para no reconsultar. El problema a atacar es MCP ad-hoc sin
+                cache ni techo.
               </div>
             </div>
           </div>
@@ -347,7 +348,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
         <section className="slide">
           <span className="kicker">Token creator · user agent · scope</span>
           <h2>
-            Quién gasta y <span className="neon-rose">con qué</span>
+            Mismo cupo, <span className="neon">dos lógicas</span>
           </h2>
           <div className="grid-3">
             <div className="panel stack">
@@ -357,14 +358,14 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                 <br />
                 {logs.meta.users.accesos.email} · {logs.meta.users.accesos.role}
                 <br />
-                {logs.meta.users.accesos.channel}
+                MCP ad-hoc · sin persistir en Orbit
               </div>
               <div className="alert" style={{ fontSize: '0.82rem' }}>
                 <strong>Online Enterprises LLC</strong> (Esteban)
                 <br />
                 {logs.meta.users.esteban.email} · {logs.meta.users.esteban.role}
                 <br />
-                {logs.meta.users.esteban.channel}
+                Orbit · sync a Supabase · reutilizable
               </div>
               <h3>Scope ciclo actual</h3>
               <HBars items={cur.by_scope} tone="amber" />
@@ -378,7 +379,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
               <HBars items={cur.by_agent.slice(0, 5)} />
               <div className="alert critical">
                 OpenAI MCP: {fmt(prev.by_agent.find((a) => a.name.includes('OpenAI'))?.units)} units
-                el mes pasado. Una sola familia de user-agent.
+                el mes pasado — gasto que no quedó en BD de Orbit.
               </div>
             </div>
           </div>
@@ -472,8 +473,8 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                 </ul>
               </div>
               <div className="alert critical">
-                Acción: tope mensual en la key MCP de Accesos SeoLab. Separar Claude / OpenAI /
-                Codex. Orbit (info@) con techo propio.
+                Acción: tope en key MCP Accesos + preferir Orbit (cache Supabase). Orbit se
+                monitorea, no se criminaliza: es inversión de plataforma.
               </div>
             </div>
           </div>
@@ -533,13 +534,13 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                 o: 'Equipo MCP',
               },
               {
-                t: 'Orbit con presupuesto',
-                d: 'Techo en Online Enterprises / proxy. organic-keywords y top-pages con cache estricto.',
-                o: 'Osward',
+                t: 'Orbit = vía preferida',
+                d: 'Módulos ya persisten en Supabase. Trabajo de clientes por Orbit; MCP solo si Orbit no cubre el caso.',
+                o: 'Equipo',
               },
               {
                 t: 'Inventario de MCP clients',
-                d: 'Claude / OpenAI / Codex conectados a Accesos — quién, para qué, revocar huérfanos.',
+                d: 'Claude / OpenAI / Codex en Accesos — quién, para qué, revocar huérfanos.',
                 o: 'Esteban',
               },
               {
@@ -548,9 +549,9 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
                 o: 'Gestión',
               },
               {
-                t: 'Proxy obligatorio clientes',
-                d: 'Trabajo de clientes por Orbit. MCP solo con excepción y techo.',
-                o: 'Equipo',
+                t: 'Techo Orbit (salud)',
+                d: 'Alertas si un sync de módulo se dispara sin necesidad; no frenar preparación legítima.',
+                o: 'Osward',
               },
             ].map((a, i) => (
               <div className="panel stack" key={a.t}>
@@ -577,11 +578,11 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock, logs: AnalyticsData) {
         <section className="slide">
           <span className="kicker">Cierre</span>
           <h1>
-            Accesos MCP quemó el mes. <span className="neon">Orbit también gasta</span> — con log.
+            Atacar MCP ad-hoc. <span className="neon">Orbit invierte y cachea</span>.
           </h1>
           <p className="lead">
-            Semrush: invisible. Ahrefs: el CSV nombra token, scope y user-agent. Techos por key +
-            proxy para clientes + MCP acotado.
+            Units en Orbit preparan módulos y viven en Supabase. Units en MCP Accesos se evaporan
+            sin reutilizar. Techo al MCP; Orbit como vía preferida.
           </p>
           <div className="hero-meta">
             <span>

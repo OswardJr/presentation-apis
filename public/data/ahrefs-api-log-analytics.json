@@ -23,11 +23,11 @@
   "attack": {
     "title": "El CSV identifica al quemador",
     "bullets": [
-      "Ciclo anterior: Accesos SeoLab (MCP) gastó 244.492 units (60.1% del mes) — OpenAI MCP lideró.",
-      "Ciclo actual (8 días): Orbit/Esteban 46.373 vs MCP/Accesos 39.878.",
-      "Llamadas MCP matching-terms de hasta 13.250 units c/u (13 jul: dos = 26.500).",
-      "MCP no deja IP. Orbit deja rastro AWS US (Supabase Edge).",
-      "Endpoints caros: keywords-explorer/* y site-explorer/organic-keywords — no el panel UI."
+      "Ciclo anterior: Accesos SeoLab (MCP) gastó 244.492 units (60.1% del mes) — OpenAI MCP lideró, sin persistir en Orbit.",
+      "Orbit (Esteban/info@) también gasta: preparación de módulos cuyos resultados muchos ya viven en Supabase para no reconsultar.",
+      "Ciclo actual: Orbit 46.373 vs MCP Accesos 39.878 — no comparar 1:1; Orbit es inversión reutilizable, MCP es ad-hoc.",
+      "matching-terms MCP a 13.250 units/call (13 jul ×2 = 26.500) es el patrón a cortar.",
+      "MCP sin IP; Orbit deja AWS US (Supabase Edge) + log. Monitorear Orbit, techar MCP."
     ]
   },
   "compare": {
