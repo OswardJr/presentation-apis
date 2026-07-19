@@ -18,28 +18,32 @@
 
 ---
 
-## 2. Caso Semrush (3 min) — una sola slide
+## 2. Caso Semrush + contraste de modelos (3 min)
 
-> “De 36.370 a cero en tres días. Solo el 1,3% está en nuestros logs. El 98,7% fue invisible: dos golpes grandes, no un goteo.”
+> “De 36.370 a cero en tres días. Solo el 1,3% está en nuestros logs. El 98,7% fue invisible.”
 
-Hipótesis (di “no confirmada”): Position Tracking · 100/gestión + 100/keyword.  
-Lección: **fuera del proxy = no existe para nosotros.**
+Cierra con el contraste ([doc Ahrefs créditos](https://help.ahrefs.com/en/articles/6061657-ahrefs-usage-based-pricing-for-credit-based-plans)):
+
+> “Semrush es un paquete prepago de units sin reset. Ahrefs Standard 2022 tiene **dos medidores**: créditos de interfaz (cobro por usuario) y API units (cupo mensual que sí resetea). No son lo mismo.”
 
 ---
 
-## 3. Por qué tanto gasto Ahrefs (3–4 min)
+## 3. Gasto Ahrefs — dos medidores (3–4 min)
 
-> “No es misterio total: la API nos dice el corte. ~54% es la key de Orbit. ~46% es todo lo demás: UI, otras keys, MCP.”
+> “Standard 2022 es plan credit-based legacy — no el Standard Unlimited nuevo.”
 
-Drivers a decir:
-1. **Orbit** — agentes (smart reports, keywords, competitors, content gap, forecast, backlinks). Mín. 50 units/call.  
-2. **Fuera de esa key** — sin inventario de keys no hay dueño.  
-3. **Estructura de precio** — muchas filas + campos caros = burn.  
-4. **Brand Radar** — otro cupo, mismo síntoma (~7.200 vs 300).
+**Medidor 1 — API units:** 86.251 / 400.000 (21,6%) · Orbit ~54% · resto keys/MCP ~46%.
 
-> “21% del mes no es crisis. El riesgo es un pico sin dueño, como Semrush.”
+**Medidor 2 — Créditos UI:** 1 crédito al abrir reporte / filtrar / pedir datos (no Site Audit ni Rank Tracker).
+| Usuario | Créditos | Nivel | Cobro |
+|---|---|---|---|
+| Accesos SeoLab | 41/600 | Casual (6–100) | ~$20/mes |
+| Online Enterprises | 12 | Casual | ~$20/mes |
 
-Para cerrar la duda fina: revisar en Ahrefs **Account → API keys** el uso por key (MCP vs Orbit vs otras) y en Orbit el call log por endpoint.
+Power = 101–600 → $60/mes. El plan incluye 1 Power. Pay-as-you-go créditos **off** (bien).  
+Brand Radar ~7.200/300 = tercer cupo.
+
+> “21% de API no es crisis. El riesgo es pico sin dueño + usuarios que suben de Casual a Power sin control.”
 
 ---
 

@@ -118,6 +118,25 @@ export interface UsageData {
       next_steps: string[];
     };
   };
+  credits_model?: {
+    source: string;
+    plan_class: string;
+    key_point: string;
+    credits_rule: string;
+    user_tiers_legacy_standard: { tier: string; credits: string; charge_usd: number }[];
+    included: string;
+    pay_as_you_go_credits: { enabled: boolean; price: string; note: string };
+    current_users: {
+      user: string;
+      credits_used: number;
+      limit: number | null;
+      tier: string;
+      implied_charge_usd: number;
+      note: string;
+    }[];
+    vs_new_plans: string;
+    contrast_semrush: string;
+  };
   spend_analysis?: {
     summary: string;
     drivers: { title: string; detail: string }[];

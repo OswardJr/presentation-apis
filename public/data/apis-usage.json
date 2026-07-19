@@ -120,24 +120,61 @@
       "Ahrefs seguía saludable: la fuente principal no se cayó, el riesgo de modelo sí"
     ]
   },
+  "credits_model": {
+    "source": "https://help.ahrefs.com/en/articles/6061657-ahrefs-usage-based-pricing-for-credit-based-plans",
+    "plan_class": "Legacy Standard 2022 · credit-based (no es el Standard Unlimited actual)",
+    "key_point": "En Ahrefs hay dos medidores distintos: créditos de interfaz (por usuario) y API units (workspace). No se mezclan.",
+    "credits_rule": "1 crédito al abrir un reporte, aplicar filtros o pedir más datos. No aplica a Site Audit ni Rank Tracker.",
+    "user_tiers_legacy_standard": [
+      { "tier": "Inactive", "credits": "0–5", "charge_usd": 0 },
+      { "tier": "Casual", "credits": "6–100", "charge_usd": 20 },
+      { "tier": "Power", "credits": "101–600", "charge_usd": 60 }
+    ],
+    "included": "El plan incluye 1 Power user (hasta 600 créditos/mes en el fee de suscripción).",
+    "pay_as_you_go_credits": {
+      "enabled": false,
+      "price": "$50 / 500 créditos extra (válidos 3 ciclos de facturación)",
+      "note": "Deshabilitado por defecto — bien: evita cargos sorpresa en créditos UI."
+    },
+    "current_users": [
+      {
+        "user": "Accesos SeoLab",
+        "credits_used": 41,
+        "limit": 600,
+        "tier": "Casual",
+        "implied_charge_usd": 20,
+        "note": "41 está en 6–100 → Casual ($20/mes), no Power todavía"
+      },
+      {
+        "user": "Online Enterprises LLC",
+        "credits_used": 12,
+        "limit": null,
+        "tier": "Casual",
+        "implied_charge_usd": 20,
+        "note": "12 créditos → también Casual ($20/mes)"
+      }
+    ],
+    "vs_new_plans": "Los Standard actuales y superiores tienen créditos ilimitados (fair usage). Standard 2022 sigue midiendo y cobrando por nivel de usuario.",
+    "contrast_semrush": "Semrush API = paquete prepago de units sin reset mensual. Ahrefs = créditos UI (cobro por usuario activo) + cupo mensual de API units (sí resetea)."
+  },
   "spend_analysis": {
-    "summary": "86.251 units de Ahrefs en el ciclo: ~54% esta key Orbit, ~46% otras keys/UI/MCP. La key Orbit no tiene tope mensual (null).",
+    "summary": "86.251 API units en el ciclo: ~54% key Orbit, ~46% otras keys/UI/MCP. Además: créditos UI por usuario (Casual/Power) — otro costo. Key Orbit sin tope (null).",
     "drivers": [
       {
-        "title": "Orbit / ahrefs-api-proxy (~54%)",
-        "detail": "Agentes y sync: smart-report, keyword research, competitor analysis, content gap, forecasting, backlinks. Mín. 50 units/request."
+        "title": "API units · Orbit (~54%)",
+        "detail": "ahrefs-api-proxy: smart-report, keywords, competitors, content gap, forecast, backlinks. Mín. 50 units/request."
       },
       {
-        "title": "Fuera de esa key (~46%)",
-        "detail": "Panel Ahrefs, otras API keys, conexiones MCP (scope MCP) e integraciones. Sin inventario de keys no hay dueño claro."
+        "title": "API units · fuera de esa key (~46%)",
+        "detail": "Otras keys, MCP e integraciones. El panel UI gasta créditos, no estas units — pero otras keys sí."
       },
       {
-        "title": "Costo estructural",
-        "detail": "Cada consulta de pago cuesta al menos 50 units; campos caros (5–10) y muchas filas multiplican. Sin select/limit el burn sube rápido."
+        "title": "Créditos UI · cobro por usuario",
+        "detail": "Legacy Standard: Casual $20 (6–100) · Power $60 (101–600). Hoy SeoLab 41 y Online Ent. 12 = ambos Casual."
       },
       {
         "title": "Brand Radar (cupo aparte)",
-        "detail": "~7.200 / 300 comprobaciones de prompts: no es API units, pero muestra el mismo patrón de uso sin techo."
+        "detail": "~7.200 / 300 comprobaciones: ni créditos UI ni API units estándar — tercer medidor desbordado."
       }
     ]
   },

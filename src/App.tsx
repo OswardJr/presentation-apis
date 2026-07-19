@@ -125,6 +125,7 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
   const brandRadar = ui.brand_radar_prompt_checks;
   const report = data.trigger_case.report;
   const spend = data.spend_analysis;
+  const credits = data.credits_model;
   const mcp = data.mcp_policy;
 
   return [
@@ -184,23 +185,36 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
                 ))}
               </div>
               <div className="alert critical">
-                Explicadas: {fmt(report?.explained_units)} (pruebas + verificación). El resto solo
-                conocemos extremos. Hipótesis: Position Tracking (no confirmada).
+                Explicadas: {fmt(report?.explained_units)}. Hipótesis Position Tracking (no
+                confirmada). Fuera del proxy = invisible.
               </div>
             </div>
             <div className="panel stack">
-              <h3>Lo que obliga a cambiar</h3>
+              <h3>Semrush vs Ahrefs (modelos distintos)</h3>
               <ul className="list">
-                {data.trigger_case.lessons.slice(0, 3).map((l, i) => (
-                  <li key={l}>
-                    <span className="n">0{i + 1}</span>
-                    <span>{l}</span>
-                  </li>
-                ))}
+                <li>
+                  <span className="n">SM</span>
+                  <span>
+                    <strong style={{ color: 'var(--ink)' }}>Semrush API:</strong> paquete prepago
+                    de units, sin reset mensual → si llega a 0, se apaga.
+                  </span>
+                </li>
+                <li>
+                  <span className="n">AH</span>
+                  <span>
+                    <strong style={{ color: 'var(--ink)' }}>Ahrefs Standard 2022:</strong> dos
+                    medidores — créditos UI (cobro por usuario) + API units (cupo mensual que sí
+                    resetea).
+                  </span>
+                </li>
+                <li>
+                  <span className="n">!!</span>
+                  <span>{credits?.key_point}</span>
+                </li>
               </ul>
               <div className="chips">
-                <span className="chip danger">0 units ahora</span>
-                <span className="chip">Solo vía proxy = visible</span>
+                <span className="chip danger">Semrush 0 units</span>
+                <span className="chip hot">Ahrefs API ~{pct(api.pct_workspace)}</span>
               </div>
             </div>
           </div>
@@ -212,39 +226,60 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
       title: 'Gasto Ahrefs',
       node: (
         <section className="slide">
-          <span className="kicker">Por qué tanto gasto · ciclo actual</span>
+          <span className="kicker">
+            Standard 2022 · créditos UI ≠ API units
+          </span>
           <h2>
-            <span className="neon">{fmt(api.units_usage_workspace)}</span>
-            <span style={{ color: 'var(--muted)', fontSize: '0.4em', fontWeight: 500 }}>
-              {' '}
-              / {fmt(api.units_limit_workspace)} · {pct(api.pct_workspace)}
-            </span>
+            Dos medidores, <span className="neon">un presupuesto</span>
           </h2>
           <div className="grid-2">
             <div className="stack">
-              {(ahrefs.breakdown ?? []).map((b) => (
-                <div className="panel" key={b.source}>
-                  <div className="stat">
-                    <span className="label">{b.label}</span>
-                    <span className="value" style={{ fontSize: '1.45rem' }}>
-                      {fmt(b.units)}{' '}
-                      <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
-                        ({b.share_pct}%)
-                      </span>
-                    </span>
-                    <Bar value={b.share_pct} max={100} />
-                  </div>
+              <div className="panel">
+                <h3>1 · API units (workspace)</h3>
+                <div className="stat">
+                  <span className="value neon" style={{ fontSize: '1.6rem' }}>
+                    {fmt(api.units_usage_workspace)} / {fmt(api.units_limit_workspace)}
+                  </span>
+                  <span className="hint">
+                    {pct(api.pct_workspace)} · Orbit {fmt(api.units_usage_api_key)} (
+                    {pct(api.pct_this_key_of_workspace)}) · otras keys/MCP{' '}
+                    {fmt(api.units_usage_other_keys_or_ui)}
+                  </span>
+                  <Bar value={api.units_usage_workspace ?? 0} max={api.units_limit_workspace ?? 1} />
                 </div>
-              ))}
-              <div className="alert warning">
-                Brand Radar UI: ~{fmt(brandRadar?.used_approx)} / {fmt(brandRadar?.limit)} — otro
-                cupo, mismo síntoma de uso sin dueño.
+              </div>
+              <div className="panel">
+                <h3>2 · Créditos UI (por usuario)</h3>
+                <p className="lead" style={{ fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                  {credits?.credits_rule}
+                </p>
+                <div className="split-metric">
+                  {(credits?.current_users ?? []).map((u) => (
+                    <div className="stat" key={u.user}>
+                      <span className="label">{u.user}</span>
+                      <span className="value" style={{ fontSize: '1.2rem' }}>
+                        {fmt(u.credits_used)}
+                        {u.limit != null ? ` / ${fmt(u.limit)}` : ''}
+                      </span>
+                      <span className="hint">
+                        {u.tier} · ~${u.implied_charge_usd}/mes
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="chips" style={{ marginTop: '0.55rem' }}>
+                  {(credits?.user_tiers_legacy_standard ?? []).map((t) => (
+                    <span className="chip" key={t.tier}>
+                      {t.tier} {t.credits} → ${t.charge_usd}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="panel stack">
-              <h3>Dónde se va (Orbit + fuera)</h3>
+              <h3>Dónde se va + reglas del plan</h3>
               <ul className="list">
-                {(spend?.drivers ?? []).map((d, i) => (
+                {(spend?.drivers ?? []).slice(0, 3).map((d, i) => (
                   <li key={d.title}>
                     <span className="n">0{i + 1}</span>
                     <span>
@@ -253,6 +288,14 @@ function buildSlides(data: UsageData, ahrefs: ApiBlock) {
                   </li>
                 ))}
               </ul>
+              <div className="alert">
+                Pay-as-you-go créditos <strong>off</strong> (bien). Incluye 1 Power user / 600 cr.
+                Brand Radar ~{fmt(brandRadar?.used_approx)}/{fmt(brandRadar?.limit)} es un 3.er
+                cupo.
+              </div>
+              <span className="mono" style={{ color: 'var(--dim)', fontSize: '0.72rem' }}>
+                help.ahrefs.com · usage-based pricing · credit-based plans
+              </span>
             </div>
           </div>
         </section>
