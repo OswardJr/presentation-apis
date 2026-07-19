@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "title": "Control y uso de APIs",
+    "presenter": "Osward",
+    "gestion": "Sebastian Castaño",
+    "duration_minutes": 20,
+    "generated_at": "2026-07-19T06:05:00Z",
+    "docs_home": "Orbit",
+    "notes": "Snapshot estático para la presentación. Actualizar con npm run refresh:ahrefs. IP/país se enriquecen desde logs de Orbit cuando existan."
+  },
+  "trigger_case": {
+    "provider": "semrush",
+    "name": "Semrush API",
+    "severity": "Caso detonante de esta exposición",
+    "summary": "El paquete prepago de units se agotó en aproximadamente 3 días. Semrush no resetea mensualmente: si el saldo llega a 0, las herramientas fallan hasta recargar.",
+    "billing_model": "prepago (paquete, sin reset mensual)",
+    "orbit_module": "/leaders/semrush-api-usage",
+    "orbit_tables": ["semrush_api_call_log", "semrush_usage_snapshots"],
+    "orbit_gateway": "semrush-gateway",
+    "lessons": [
+      "Sin monitoreo en tiempo real, un paquete prepago puede evaporarse en días",
+      "Hay que registrar balance antes/después de cada llamada (consumo real, no estimado)",
+      "Cache y límites por herramienta son obligatorios en APIs de pago"
+    ]
+  },
+  "apis": [
+    {
+      "id": "ahrefs",
+      "name": "Ahrefs",
+      "status": "active",
+      "priority": 1,
+      "billing_model": "mensual con cupo de API units",
+      "controlled_by": "company",
+      "orbit_module": "/leaders/ahrefs-api-usage",
+      "why_monitored": "Principal fuente SEO de pago en Orbit (Site Explorer, métricas, reportes).",
+      "subscription": {
+        "plan": "Standard 2022, facturado mensual",
+        "next_billing_date": "2026-08-12",
+        "usage_reset_date": "2026-08-12T00:00:00Z",
+        "pay_as_you_go": false
+      },
+      "api": {
+        "source": "ahrefs_v3_subscription_info",
+        "fetched_at": "2026-07-19T06:05:00Z",
+        "units_limit_workspace": 400000,
+        "units_usage_workspace": 86251,
+        "units_remaining_workspace": 313749,
+        "pct_workspace": 21.56,
+        "units_usage_api_key": 46373,
+        "units_usage_other_keys_or_ui": 39878,
+        "pct_this_key_of_workspace": 53.77,
+        "units_limit_api_key": null,
+        "api_key_expiration_date": "2027-03-16T17:34:55Z",
+        "endpoint": "GET /v3/subscription-info/limits-and-usage"
+      },
+      "ui_panel": {
+        "source": "Ahrefs Account → Límites y uso",
+        "captured_at": "2026-07-19",
+        "credits_by_user": [
+          { "user": "Accesos SeoLab", "used": 41, "limit": 600 },
+          { "user": "Online Enterprises LLC", "used": 12, "limit": null }
+        ],
+        "extra_credits_month": 0,
+        "projects": { "verified": 58, "unverified": 1, "unverified_limit": 20 },
+        "export_rows": { "used": 20, "limit": 1500000 },
+        "brand_radar_prompt_checks": { "used_approx": 7200, "limit": 300, "over_limit": true },
+        "rank_tracker_keywords": { "used": 969, "limit": 2000, "update_frequency": "weekly" },
+        "site_audit_crawl_credits": { "used": 4825, "limit": 500000 },
+        "api_units": { "used": 86251, "limit": 400000 }
+      },
+      "breakdown": [
+        {
+          "source": "api_key_orbit_primary",
+          "label": "API key principal (Orbit / proxy)",
+          "units": 46373,
+          "share_pct": 53.77,
+          "notes": "Consumo atribuible a la key usada por el ecosistema Orbit"
+        },
+        {
+          "source": "other_keys_ui_mcp",
+          "label": "Otras keys / UI / MCP / integraciones",
+          "units": 39878,
+          "share_pct": 46.23,
+          "notes": "Diferencia workspace − esta key. Incluye panel Ahrefs, otras keys y posibles clientes MCP"
+        }
+      ],
+      "traffic_hints": {
+        "ip_country_available": false,
+        "planned_enrichment": "Logs en Orbit (ahrefs call log / gateway) para endpoint, label, IP y país cuando el proxy lo registre",
+        "samples": []
+      },
+      "alerts": [
+        { "level": "info", "message": "API al 21.6% del cupo mensual — holgado, pero Semrush demostró que puede acelerarse." },
+        { "level": "warning", "message": "Brand Radar ~7,200 / 300 comprobaciones: muy por encima del plan base." },
+        { "level": "ok", "message": "Pago por uso deshabilitado: no hay sobregiro automático de API units." }
+      ]
+    },
+    {
+      "id": "semrush",
+      "name": "Semrush",
+      "status": "watch",
+      "priority": 2,
+      "billing_model": "prepago sin reset mensual",
+      "controlled_by": "company",
+      "orbit_module": "/leaders/semrush-api-usage",
+      "why_monitored": "Segunda fuente SEO. Caso real: paquete agotado en ~3 días.",
+      "api": {
+        "source": "orbit_semrush_gateway",
+        "note": "Balance vivo vía countapiunits (0 costo). Historial en semrush_api_call_log."
+      },
+      "alerts": [
+        { "level": "critical", "message": "Sin saldo = fallan herramientas con fuente Semrush hasta recargar paquete." }
+      ]
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter (LLM / contenido)",
+      "status": "planned",
+      "priority": 3,
+      "billing_model": "consumo por tokens",
+      "controlled_by": "company",
+      "orbit_module": "openrouter_usage_logs",
+      "why_monitored": "Generación de contenidos y orquestadores en Orbit. Próximo bloque a sumar en esta presentación.",
+      "api": null,
+      "alerts": []
+    },
+    {
+      "id": "gsc_ga4",
+      "name": "Google Search Console / GA4",
+      "status": "out_of_scope",
+      "priority": 99,
+      "billing_model": "casi gratuito / cuota generosa",
+      "controlled_by": "company",
+      "why_monitored": "Fuera del foco de costo. Se mantienen, pero no impulsan esta política de control.",
+      "api": null,
+      "alerts": []
+    }
+  ],
+  "policy": {
+    "goals": [
+      "Reducir costos y evitar consultas innecesarias",
+      "Centralizar lectura de consumo en Orbit",
+      "Definir excepciones y quién las autoriza",
+      "Usar MCP de forma eficiente",
+      "Saber qué keys/cuentas controla la empresa",
+      "Alinear herramientas/IDEs de terceros",
+      "Rol claro de monitoreo (Osward)",
+      "Alertas, límites y protocolo ante gasto no identificado"
+    ],
+    "exceptions": {
+      "allowed": true,
+      "approver": "Sebastian Castaño (gestión) + Osward (operación)",
+      "process": "Solicitud en Orbit → justificación → ventana temporal → revisión post-uso"
+    },
+    "mcp": {
+      "rule": "Preferir endpoints cacheados / targets de prueba en desarrollo; nunca barridos masivos sin límite",
+      "docs": "Orbit"
+    },
+    "third_party_tools": {
+      "owner_discussion": "Esteban",
+      "topics": ["IDEs con MCP", "extensiones que llaman APIs con keys compartidas", "entornos locales vs producción"]
+    },
+    "monitoring": {
+      "owner": "Osward",
+      "channels": ["Orbit → Leaders → monitores Ahrefs/Semrush", "snapshots diarios", "logs por endpoint"],
+      "thresholds_ahrefs_api_pct": { "moderate": 50, "warning": 75, "critical": 90 },
+      "unidentified_spend_protocol": [
+        "Detectar pico (snapshot o alerta)",
+        "Revisar call log por endpoint/label/source",
+        "Aislar key sospechosa (rotar o limitar)",
+        "Comunicar a gestión",
+        "Documentar en Orbit y ajustar límites"
+      ]
+    }
+  }
+}
