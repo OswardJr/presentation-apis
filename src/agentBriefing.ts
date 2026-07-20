@@ -15,92 +15,67 @@ function fmt(n: number): string {
   return n.toLocaleString('es-CO');
 }
 
-/** Humanized briefing from Semrush case + Ahrefs CSV forensics */
+/** Neutral, humanized briefing from Semrush case + Ahrefs CSV analysis. */
 export function buildAgentBriefing(data: UsageData, logs: AnalyticsData): AgentInsight[] {
   const report = data.trigger_case.report;
-  const { compare, previous: prev, current: cur } = logs;
-  const openaiPrev = prev.by_agent.find((a) => a.name.includes('OpenAI'))?.units ?? 0;
-  const topCall = cur.top_calls[0];
+  const { compare } = logs;
 
   return [
     {
-      id: 'semrush-story',
-      slide: 'semrush',
-      tone: 'alert',
-      title: 'Lo que nos pasó con Semrush',
-      body: `En un fin de semana pasamos de ${fmt(report?.balance_start ?? 36370)} a cero. Casi todo ese gasto no dejó huella en nuestros sistemas. Fue como vaciar la nevera con la puerta cerrada: solo vimos que estaba vacía el lunes.`,
-    },
-    {
-      id: 'semrush-lesson',
-      slide: 'semrush',
+      id: 'summary',
+      slide: 'summary',
       tone: 'watch',
-      title: 'La lección en cristiano',
-      body: 'Si alguien consulta por fuera de nuestra plataforma, nosotros no lo vemos. Con Ahrefs al menos el export dice quién usó la llave y si vino de un asistente de IA. Eso nos da ventaja para poner reglas.',
+      title: 'Qué muestran los datos',
+      body: `Semrush pasó de ${fmt(report?.balance_start ?? 36370)} a cero en tres días. En Ahrefs, el ciclo anterior llegó a ${fmt(compare.previous.units)} unidades y el actual lleva ${fmt(compare.current.units)}. Ya tenemos suficiente información para mejorar el control sin señalar a nadie.`,
     },
     {
-      id: 'prev-month',
-      slide: 'csv-compare',
-      tone: 'alert',
-      title: 'El mes que se nos fue de las manos',
-      body: `Entre junio y julio gastamos ${fmt(compare.previous.units)} unidades. Más de la mitad (${fmt(compare.previous.accesos)}) salió por Accesos con asistentes de IA. No fue el panel de Ahrefs: fueron conversaciones que pedían datos caros una y otra vez.`,
-    },
-    {
-      id: 'orbit-vs-mcp',
-      slide: 'csv-compare',
+      id: 'context',
+      slide: 'summary',
       tone: 'calm',
-      title: 'Orbit no es el villano',
-      body: `Cuando Orbit gasta (${fmt(compare.current.orbit)} este ciclo), casi siempre está armando o actualizando módulos. Esa información se guarda en Supabase para no pagar de nuevo. El gasto que duele es el de los chats: se usa y se olvida.`,
+      title: 'No todo consumo significa lo mismo',
+      body: 'Parte del gasto prepara módulos de Orbit y deja datos guardados para reutilizarlos. Otra parte corresponde a búsquedas puntuales desde asistentes. La oportunidad es coordinar ambos caminos.',
     },
     {
-      id: 'pace',
-      slide: 'csv-compare',
+      id: 'orbit-value',
+      slide: 'orbit',
+      tone: 'calm',
+      title: 'El valor de guardar una vez',
+      body: `Orbit consumió ${fmt(compare.current.orbit)} unidades en el ciclo actual, principalmente al preparar o actualizar módulos. Muchos resultados quedan en Supabase y pueden servir a varias personas sin volver a descargarlos.`,
+    },
+    {
+      id: 'orbit-cost',
+      slide: 'orbit',
+      tone: 'calm',
+      title: 'Operación baja, incorporación variable',
+      body: 'Una vez que el módulo está listo y tiene datos almacenados, su operación diaria puede mantenerse con poco consumo. Las nuevas incorporaciones, históricos o mercados sí requieren una inversión inicial mayor.',
+    },
+    {
+      id: 'collaboration',
+      slide: 'recommendations',
       tone: 'watch',
-      title: 'El ritmo de ahora',
-      body: `Vamos a unas ${fmt(compare.current.per_day)} unidades por día. Es casi el mismo ritmo del mes que se comió el cupo. Si no ponemos techo al uso por chat, en tres semanas estamos otra vez al borde.`,
+      title: 'La mejora es trabajar juntos',
+      body: 'Antes de repetir una búsqueda, podemos revisar si el dato ya existe en Orbit. Si hace falta algo nuevo, el equipo puede pedir que se almacene y quede disponible para todos.',
     },
     {
-      id: 'two-doors',
-      slide: 'users-agents',
+      id: 'guardrails',
+      slide: 'recommendations',
       tone: 'calm',
-      title: 'Dos puertas al mismo presupuesto',
-      body: `Hay dos llaves. Accesos (el equipo) abre la puerta de los chats de IA. Esteban / Orbit abre la de la plataforma. Las dos gastan del mismo bolsillo, pero solo Orbit deja el trabajo hecho para mañana.`,
+      title: 'Límites que ayudan, no que bloquean',
+      body: 'Topes por conexión, consultas pequeñas y alertas tempranas permiten seguir usando Ahrefs y los asistentes con libertad, evitando que una sola tarea consuma el margen del mes.',
     },
     {
-      id: 'openai-burn',
-      slide: 'users-agents',
-      tone: 'alert',
-      title: 'El chat que más nos costó',
-      body: `Solo con OpenAI conectado a Ahrefs se fueron unas ${fmt(openaiPrev)} unidades el mes pasado. Una pregunta mal hecha —listas largas de keywords— puede costar más que una semana de trabajo ordenado en Orbit.`,
-    },
-    {
-      id: 'expensive-call',
-      slide: 'endpoints-geo',
-      tone: 'alert',
-      title: 'La llamada que duele',
-      body: topCall
-        ? `La más cara reciente: ${fmt(topCall.units)} unidades en un solo golpe (${topCall.endpoint}). Si eso se repite diez veces en una tarde, desaparece el margen del mes.`
-        : 'Hay llamadas sueltas de más de trece mil unidades. Eso no es investigar: es vaciar el tanque.',
-    },
-    {
-      id: 'where-from',
-      slide: 'endpoints-geo',
-      tone: 'watch',
-      title: 'Desde dónde llega',
-      body: 'Los chats de IA no dejan IP clara: aparecen como si vinieran “de la nube de Ahrefs”. Orbit sí deja rastro en servidores de Estados Unidos. Por eso conviene que el trabajo de clientes pase por Orbit: se ve y se reutiliza.',
-    },
-    {
-      id: 'what-to-do',
-      slide: 'actions',
+      id: 'shared-plan',
+      slide: 'plan',
       tone: 'calm',
-      title: 'Qué haría yo esta semana',
-      body: 'Poner un techo a la llave de Accesos. Pedir que el trabajo de clientes viva en Orbit. Dejar los chats solo para dudas puntuales, no para barrer mercados enteros. Y con Semrush: preguntar quién más tenía la llave.',
+      title: 'Una propuesta sencilla',
+      body: 'Consultar primero lo que ya existe, pedir juntos los datos nuevos, guardarlos en Orbit y revisar el consumo cada semana. Es una mejora de proceso para todos, incluido quien presenta.',
     },
     {
       id: 'closing',
       slide: 'close',
       tone: 'calm',
-      title: 'En una frase',
-      body: 'Cuidemos el presupuesto donde el gasto se evapora (chats). Protejamos y prefiramos donde el gasto deja memoria (Orbit).',
+      title: 'Objetivo común',
+      body: 'No se trata de usar menos herramientas: se trata de aprovechar mejor cada descarga, compartir lo aprendido y cuidar juntos el presupuesto de la empresa.',
     },
   ];
 }

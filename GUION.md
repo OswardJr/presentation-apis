@@ -1,75 +1,62 @@
-# Guion — Control de APIs (≈20 min · 9 slides)
+# Guion — Uso responsable de APIs (20 min · 6 pantallas)
 
-**Presenta:** Osward · **Gestión:** Sebastian · **Docs:** Orbit  
+**Tono:** informativo, colaborativo y sin buscar culpables. Todos podemos equivocarnos o repetir una consulta.
 
----
+## 1. Portada — 1 min
 
-## Narrativa correcta (importante)
+> “Quiero compartir lo que encontramos, explicar cómo Orbit ayuda a reutilizar datos y proponer opciones para trabajar mejor juntos.”
 
-**Orbit (Online Enterprises / Esteban / info@)** gasta units al **preparar módulos**. Muchos de esos flujos **ya guardan en Supabase** para no volver a pegarle a Ahrefs. Eso es inversión de plataforma + cache — se monitorea, no se trata como desperdicio.
+## 2. Resumen de datos — 4 min
 
-**Accesos SeoLab (MCP)** gasta en consultas ad-hoc (Claude / OpenAI / Codex) que **no dejan el mismo activo reutilizable** en Orbit. Ese fue el burn del mes anterior (60%).
+- Semrush: 36.370 a 0 en tres días; gran parte sin trazabilidad interna.
+- Ahrefs, ciclo anterior: 406.833 unidades.
+- Ahrefs, ciclo actual: 86.251 unidades en ocho días.
 
-Frase ancla:
-> “No es Orbit vs el equipo. Es gasto que se cachea vs gasto que se evapora.”
+> “Estos números no son para señalar personas. Nos permiten entender el proceso y crear medidas preventivas.”
 
----
+## 3. Lectura del consumo — 3 min
 
-## Números
+> “Encontramos dos tipos de consumo: consultas puntuales desde asistentes y descargas para preparar módulos de Orbit. Ambas son válidas, pero tienen comportamientos distintos.”
 
-| | Mes anterior (11 jun–11 jul) | Ciclo actual (11–19 jul) |
-|---|---|---|
-| **Total API units** | **406.833** | **86.251** |
-| **/día** | 13.561 | 10.781 |
-| **MCP %** | **60%** | **46%** |
-| **Accesos · MCP** | **244.492** | **39.878** |
-| **Orbit · módulos** | 162.341 | **46.373** |
+- Las consultas puntuales resolvieron necesidades inmediatas.
+- Orbit descargó datos para construir módulos y hacerlos reutilizables.
+- El objetivo es coordinar ambas opciones para no comprar varias veces la misma información.
 
-- Accesos = `accesos@seolabagency.com` · Miembro · MCP  
-- Orbit = `info@seolabagency.com` · Propietario · Esteban · Supabase Edge  
-- Asesino MCP: `matching-terms` → **13.250 units/call**
+Evitar nombres, correos o frases como “quién gastó”. Hablar de canales y procesos.
 
----
+## 4. Cómo Orbit mantiene bajo el costo — 4 min
 
-## 1. Portada
-> “El CSV separa dos mundos: MCP ad-hoc bajo Accesos vs Orbit que invierte y cachea en Supabase.”
+> “Cuando añadimos un módulo, puede haber un consumo inicial mayor. Después, los datos quedan en Supabase y el equipo puede consultarlos sin repetir la descarga.”
 
-## 2. Semrush (breve)
-36.370 → 0 · 98,7% invisible. Ahrefs al menos deja Token creator + scope.
+Proceso:
 
-## 3. CSV comparativo (3 min)
-> “El mes pasado: 406 mil. Accesos MCP solo 244 mil — 60%. OpenAI MCP lideró.”
+1. Aparece una necesidad.
+2. Se descargan los datos necesarios.
+3. Se guardan en Supabase.
+4. El equipo los consulta desde Orbit.
+5. Solo se actualizan cuando hace falta.
 
-Si Orbit lidera este ciclo:
-> “Puede verse alto — es preparación de módulos. La diferencia es que ese dato queda en Supabase. MCP no.”
+> “Orbit no elimina el costo inicial; convierte esa descarga en un recurso compartido.”
 
-## 4. Dos lógicas (2.5 min)
-Nombrar emails.  
-> “Mismo cupo, dos lógicas: Orbit reutiliza; MCP consume y listo.”
+## 5. Recomendaciones al equipo — 5 min
 
-## 5. Endpoints + IP (2 min)
-matching-terms / organic-keywords. MCP sin IP; Orbit AWS US.  
-> “Cortamos el patrón MCP caro. Orbit lo afinamos con cache, no lo apagamos.”
+Presentarlas como opciones:
 
-## 6. MCP reglas (2 min)
-Techo Accesos. Preferir Orbit. matching-terms con limit.  
-> “Orbit se monitorea; MCP se techa.”
+- Revisar primero si Orbit ya tiene el dato.
+- Pedir en conjunto que la información nueva se almacene.
+- Hacer consultas pequeñas y específicas desde asistentes.
+- Usar límites preventivos por conexión.
+- Revisar el consumo semanalmente.
+- Documentar descargas grandes o excepciones.
 
-## 7. Política (1.5 min)
-4 pilares + créditos UI Casual ambos.
+> “No se trata de restringir herramientas. Se trata de que una búsqueda útil para una persona pueda quedar disponible para todos.”
 
-## 8. Acciones (2 min)
-1. Tope key Accesos MCP  
-2. Prohibir matching-terms masivo  
-3. Orbit = vía preferida (cache)  
-4. Inventario MCP clients (Esteban)  
-5. Cerrar Semrush  
-6. Alertas Orbit si sync innecesario — sin frenar prep legítima  
+## 6. Plan y cierre — 3 min
 
-## 9. Cierre
-> “Atacar MCP ad-hoc. Orbit invierte y cachea. Techo al primero; preferir el segundo.”
+- Esta semana: inventario de conexiones, alertas y límites preventivos.
+- Cada necesidad nueva: decidir qué conviene almacenar.
+- Cada viernes: revisión breve del consumo y oportunidades de reutilización.
 
----
+> “Descargar una vez y aprovechar entre todos. Esta propuesta también me incluye a mí: cualquiera puede repetir una consulta si no sabe que el dato ya existe.”
 
-## Si preguntan “¿entonces Esteban / Orbit también?”
-Sí gasta — en sync de módulos. Muchos resultados ya están en BD. Eso baja reconsultas futuras. El incendio del ciclo anterior fue **MCP Accesos**, no “Orbit sin control”.
+Abrir preguntas y recibir sugerencias del equipo.

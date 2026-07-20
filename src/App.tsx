@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { buildAgentBriefing, type AgentInsight, type InsightTone } from './agentBriefing';
 import type { AnalyticsData, LogBucket } from './analyticsTypes';
-import type { ApiBlock, UsageData } from './types';
+import type { UsageData } from './types';
 
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—';
@@ -128,15 +128,10 @@ export default function App() {
       .catch((e: Error) => setError(e.message));
   }, []);
 
-  const ahrefs = useMemo(
-    () => data?.apis.find((a) => a.id === 'ahrefs') ?? null,
-    [data],
-  );
-
   const slides = useMemo(() => {
-    if (!data || !ahrefs || !logs) return [] as { id: string; title: string; node: ReactNode }[];
-    return buildSlides(data, ahrefs, logs);
-  }, [data, ahrefs, logs]);
+    if (!data || !logs) return [] as { id: string; title: string; node: ReactNode }[];
+    return buildSlides(data, logs);
+  }, [data, logs]);
 
   const nav = useDeckNavigation(slides.length || 1);
   const current = slides[nav.index];
@@ -185,15 +180,11 @@ export default function App() {
   );
 }
 
-function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
-  const mcp = data.mcp_policy;
+function buildSlides(data: UsageData, logs: AnalyticsData) {
   const report = data.trigger_case.report;
   const { compare, current: cur, previous: prev } = logs;
   const maxUserPrev = Math.max(compare.previous.accesos, compare.previous.orbit, 1);
   const briefing = buildAgentBriefing(data, logs);
-  const boardInsights = briefing.filter((i) =>
-    ['prev-month', 'orbit-vs-mcp', 'openai-burn', 'what-to-do'].includes(i.id),
-  );
 
   return [
     {
@@ -201,13 +192,13 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
       title: 'Portada',
       node: (
         <section className="slide">
-          <span className="kicker">Exposición · con Analista Orbit</span>
+          <span className="kicker">20 minutos · resumen y propuesta</span>
           <h1>
-            El gasto ya tiene <span className="neon-rose">nombre</span>
+            Uso responsable de <span className="neon">APIs</span>
           </h1>
           <p className="lead">
-            Semrush nos despertó. Ahrefs nos mostró el detalle. Hoy separamos lo que se evapora en
-            chats de lo que Orbit guarda para reutilizar.
+            Qué aprendimos de los datos, cómo Orbit reduce consultas repetidas y qué podemos hacer
+            juntos para aprovechar mejor el presupuesto.
           </p>
           <div className="hero-meta">
             <span>
@@ -224,84 +215,66 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
       ),
     },
     {
-      id: 'agent',
-      title: 'Analista',
+      id: 'summary',
+      title: 'Resumen de datos',
       node: (
         <section className="slide">
-          <span className="kicker">Agente · lectura humanizada</span>
+          <span className="kicker">01 · Lo que encontramos</span>
           <h2>
-            Lo que importa, <span className="neon">en claro</span>
-          </h2>
-          <div className="agent-board">
-            {boardInsights.map((insight) => (
-              <AgentCard key={insight.id} insight={insight} />
-            ))}
-          </div>
-        </section>
-      ),
-    },
-    {
-      id: 'semrush',
-      title: 'Caso Semrush',
-      node: (
-        <section className="slide">
-          <span className="kicker">Detonante · 13 jul 2026</span>
-          <h2>
-            <span className="neon-rose">{fmt(report?.balance_start)}</span>
-            {' → 0'}
+            Resumen <span className="neon">breve</span>
           </h2>
           <div className="grid-2">
             <div className="stack">
-              <div className="split-metric">
-                {(report?.drops ?? []).map((d) => (
-                  <div className="panel stat" key={d.label}>
-                    <span className="label">{d.label}</span>
-                    <span className="value neon-rose" style={{ fontSize: '1.5rem' }}>
-                      {fmt(d.delta)}
-                    </span>
-                    <span className="hint">{d.window}</span>
-                  </div>
-                ))}
+              <div className="panel stat">
+                <span className="label">Semrush · incidente</span>
+                <span className="value neon-rose">
+                  {fmt(report?.balance_start)} → 0
+                </span>
+                <span className="hint">Tres días · gran parte sin trazabilidad interna</span>
               </div>
-              <div className="agent-inline">
-                {insightsFor(briefing, 'semrush').slice(0, 1).map((i) => (
-                  <AgentCard key={i.id} insight={i} />
-                ))}
+              <div className="panel stat">
+                <span className="label">Ahrefs · mes anterior</span>
+                <span className="value">{fmt(compare.previous.units)}</span>
+                <span className="hint">
+                  {fmt(compare.previous.per_day)} unidades por día
+                </span>
+              </div>
+              <div className="panel stat">
+                <span className="label">Ahrefs · ciclo actual</span>
+                <span className="value neon">{fmt(compare.current.units)}</span>
+                <span className="hint">
+                  {compare.current.days} días · {fmt(compare.current.per_day)} por día
+                </span>
               </div>
             </div>
             <div className="stack" style={{ gap: '1rem' }}>
-              {insightsFor(briefing, 'semrush')
-                .slice(1)
-                .map((i) => (
-                  <AgentCard key={i.id} insight={i} />
-                ))}
+              {insightsFor(briefing, 'summary').map((i) => (
+                <AgentCard key={i.id} insight={i} />
+              ))}
             </div>
           </div>
         </section>
       ),
     },
     {
-      id: 'csv-compare',
-      title: 'CSV comparativo',
+      id: 'data',
+      title: 'Lectura del consumo',
       node: (
         <section className="slide">
-          <span className="kicker">Dos ciclos · mismos bolsillo</span>
+          <span className="kicker">02 · Comparativo</span>
           <h2>
-            Antes y <span className="neon">ahora</span>
+            Dos tipos de <span className="neon">consumo</span>
           </h2>
           <div className="grid-2">
             <div className="panel stack">
               <h3>Mes anterior · {prev.period.label}</h3>
-              <div className="big-number neon-rose" style={{ fontSize: '2.6rem' }}>
+              <div className="big-number" style={{ fontSize: '2.5rem' }}>
                 {fmt(compare.previous.units)}
               </div>
-              <span className="hint" style={{ color: 'var(--muted)' }}>
-                {fmt(compare.previous.per_day)} al día · chats {compare.previous.mcp_pct}%
-              </span>
-              <div className="hbar-list" style={{ marginTop: '0.6rem' }}>
+              <div className="hbar-list">
                 <div className="hbar-row">
-                  <span className="hbar-label">Chats (Accesos)</span>
-                  <div className="hbar-track rose">
+                  <span className="hbar-label">Consultas desde asistentes</span>
+                  <div className="hbar-track amber">
                     <i
                       style={{
                         width: `${(compare.previous.accesos / maxUserPrev) * 100}%`,
@@ -311,7 +284,7 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
                   <span className="hbar-val">{fmt(compare.previous.accesos)}</span>
                 </div>
                 <div className="hbar-row">
-                  <span className="hbar-label">Orbit (módulos)</span>
+                  <span className="hbar-label">Módulos de Orbit</span>
                   <div className="hbar-track">
                     <i
                       style={{
@@ -323,82 +296,26 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
                 </div>
               </div>
               <Spark days={prev.by_day} />
-            </div>
-            <div className="stack" style={{ gap: '0.85rem' }}>
-              <div className="panel stack">
-                <h3>Ciclo actual · {cur.period.label}</h3>
-                <div className="big-number neon" style={{ fontSize: '2.2rem' }}>
-                  {fmt(compare.current.units)}
-                </div>
-                <span className="hint" style={{ color: 'var(--muted)' }}>
-                  {fmt(compare.current.per_day)} al día · {compare.current.days} días
-                </span>
-                <div className="hbar-list" style={{ marginTop: '0.45rem' }}>
-                  <div className="hbar-row">
-                    <span className="hbar-label">Chats (Accesos)</span>
-                    <div className="hbar-track rose">
-                      <i
-                        style={{
-                          width: `${(compare.current.accesos / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <span className="hbar-val">{fmt(compare.current.accesos)}</span>
-                  </div>
-                  <div className="hbar-row">
-                    <span className="hbar-label">Orbit (módulos)</span>
-                    <div className="hbar-track">
-                      <i
-                        style={{
-                          width: `${(compare.current.orbit / Math.max(compare.current.accesos, compare.current.orbit, 1)) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <span className="hbar-val">{fmt(compare.current.orbit)}</span>
-                  </div>
-                </div>
-                <Spark days={cur.by_day} />
-              </div>
-              {insightsFor(briefing, 'csv-compare')
-                .filter((i) => i.id === 'orbit-vs-mcp')
-                .map((i) => (
-                  <AgentCard key={i.id} insight={i} />
-                ))}
-            </div>
-          </div>
-        </section>
-      ),
-    },
-    {
-      id: 'users-agents',
-      title: 'Usuarios y canales',
-      node: (
-        <section className="slide">
-          <span className="kicker">Quién abre cada puerta</span>
-          <h2>
-            Mismo bolsillo, <span className="neon">dos formas de gastar</span>
-          </h2>
-          <div className="grid-2">
-            <div className="stack" style={{ gap: '1rem' }}>
-              {insightsFor(briefing, 'users-agents').map((i) => (
-                <AgentCard key={i.id} insight={i} />
-              ))}
+              <p className="lead" style={{ fontSize: '0.9rem' }}>
+                Las consultas de asistentes fueron el componente más grande; Orbit también realizó
+                descargas para preparar módulos y datos reutilizables.
+              </p>
             </div>
             <div className="panel stack">
-              <h3>De dónde vino el gasto (mes anterior)</h3>
+              <h3>Ciclo actual · {cur.period.label}</h3>
+              <div className="big-number neon" style={{ fontSize: '2.5rem' }}>
+                {fmt(compare.current.units)}
+              </div>
               <HBars
-                items={prev.by_agent.slice(0, 4).map((a) => ({
-                  ...a,
-                  name: a.name
-                    .replace('MCP · ', 'Chat · ')
-                    .replace('Orbit · ', 'Orbit · '),
-                }))}
-                tone="rose"
+                items={[
+                  { name: 'Módulos de Orbit', units: compare.current.orbit, calls: 0 },
+                  { name: 'Consultas desde asistentes', units: compare.current.accesos, calls: 0 },
+                ]}
               />
-              <p className="lead" style={{ fontSize: '0.9rem', marginTop: '0.75rem' }}>
-                Accesos → {logs.meta.users.accesos.email}
-                <br />
-                Orbit / Esteban → {logs.meta.users.esteban.email}
+              <Spark days={cur.by_day} />
+              <p className="lead" style={{ fontSize: '0.9rem' }}>
+                El ritmo bajó, pero todavía conviene coordinar qué se consulta y qué se almacena
+                para no pagar varias veces por la misma información.
               </p>
             </div>
           </div>
@@ -406,73 +323,74 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
       ),
     },
     {
-      id: 'endpoints-geo',
-      title: 'Dónde duele',
+      id: 'orbit',
+      title: 'Cómo trabaja Orbit',
       node: (
         <section className="slide">
-          <span className="kicker">Consultas caras · origen</span>
+          <span className="kicker">03 · Reutilización</span>
           <h2>
-            Qué preguntamos y <span className="neon-rose">cuánto cuesta</span>
+            Orbit: descargar, guardar y <span className="neon">reutilizar</span>
           </h2>
           <div className="grid-2">
             <div className="stack" style={{ gap: '1rem' }}>
-              {insightsFor(briefing, 'endpoints-geo').map((i) => (
+              {insightsFor(briefing, 'orbit').map((i) => (
                 <AgentCard key={i.id} insight={i} />
               ))}
             </div>
             <div className="panel stack">
-              <h3>Lo más caro este ciclo</h3>
-              <HBars
-                items={cur.by_endpoint.slice(0, 5).map((e) => ({
-                  ...e,
-                  name: e.name
-                    .replace('keywords-explorer/', 'keywords · ')
-                    .replace('site-explorer/', 'sitio · '),
-                }))}
-                tone="rose"
-              />
-              <h3 style={{ marginTop: '0.85rem' }}>Desde dónde</h3>
-              <HBars items={cur.by_region.slice(0, 4)} />
+              <h3>Ciclo de bajo costo</h3>
+              <ul className="list" style={{ gap: '1rem' }}>
+                {[
+                  ['01', 'Se incorpora un módulo o una nueva necesidad'],
+                  ['02', 'Se descargan los datos necesarios una primera vez'],
+                  ['03', 'La información se guarda en Supabase'],
+                  ['04', 'El equipo consulta Orbit sin repetir la descarga'],
+                  ['05', 'Solo se actualiza cuando el dato realmente cambia'],
+                ].map(([n, text]) => (
+                  <li key={n}>
+                    <span className="n">{n}</span>
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="alert">
+                El costo puede subir durante una nueva incorporación. Después, el almacenamiento y
+                la reutilización ayudan a mantenerlo bajo.
+              </div>
             </div>
           </div>
         </section>
       ),
     },
     {
-      id: 'mcp',
-      title: 'Cómo usar chats',
+      id: 'recommendations',
+      title: 'Recomendaciones',
       node: (
         <section className="slide">
-          <span className="kicker">Reglas simples</span>
+          <span className="kicker">04 · Opciones para el equipo</span>
           <h2>
-            Los chats ayudan — <span className="neon-rose">con límite</span>
+            Mejorar <span className="neon">trabajando juntos</span>
           </h2>
           <div className="grid-2">
             <div className="stack" style={{ gap: '1rem' }}>
-              <AgentCard
-                insight={{
-                  id: 'mcp-human',
-                  tone: 'watch',
-                  title: 'Cómo pedir datos sin vaciar el tanque',
-                  body: 'Una pregunta = un dominio o unas pocas keywords. No “dame todo el mercado”. Si Orbit ya tiene el módulo, ábrelo ahí: ya pagamos esa información una vez.',
-                }}
-              />
-              <AgentCard
-                insight={{
-                  id: 'mcp-cap',
-                  tone: 'alert',
-                  title: 'Lo que hay que hacer ya',
-                  body: 'Poner un tope mensual a la llave de Accesos. Separar quién usa Claude, OpenAI o Codex. Sin techo, el mes pasado se puede repetir.',
-                }}
-              />
+              {insightsFor(briefing, 'recommendations').map((i) => (
+                <AgentCard key={i.id} insight={i} />
+              ))}
             </div>
             <div className="panel stack">
-              <h3>Acuerdos del equipo</h3>
-              <ul className="list">
-                {(mcp?.rules ?? []).slice(0, 5).map((r, i) => (
-                  <li key={r}>
-                    <span className="n">0{i + 1}</span>
-                    <span>{r}</span>
+              <h3>Acuerdos propuestos</h3>
+              <ul className="list" style={{ gap: '0.9rem' }}>
+                {[
+                  'Antes de buscar, revisar si Orbit ya tiene el dato.',
+                  'Si falta información, pedirla para almacenarla y compartirla.',
+                  'Hacer consultas pequeñas y específicas desde los asistentes.',
+                  'Definir límites preventivos por conexión, sin bloquear el trabajo.',
+                  'Revisar semanalmente el consumo y aprender de los picos.',
+                  'Documentar excepciones o descargas grandes antes de ejecutarlas.',
+                ].map((text, i) => (
+                  <li key={text}>
+                    <span className="n">{String(i + 1).padStart(2, '0')}</span>
+                    <span>{text}</span>
                   </li>
                 ))}
               </ul>
@@ -482,63 +400,39 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
       ),
     },
     {
-      id: 'actions',
-      title: 'Acciones',
+      id: 'plan',
+      title: 'Plan conjunto',
       node: (
         <section className="slide">
-          <span className="kicker">Esta semana</span>
+          <span className="kicker">05 · Próximos pasos</span>
           <h2>
-            Decisiones con <span className="neon-lime">dueño</span>
+            Una propuesta <span className="neon-lime">simple</span>
           </h2>
-          <div className="agent-inline" style={{ marginBottom: '0.85rem' }}>
-            {insightsFor(briefing, 'actions').map((i) => (
+          <div className="agent-inline" style={{ marginBottom: '1rem' }}>
+            {insightsFor(briefing, 'plan').map((i) => (
               <AgentCard key={i.id} insight={i} />
             ))}
           </div>
           <div className="grid-3">
             {[
               {
-                t: 'Tope a la llave de Accesos',
-                d: 'Así un chat no se puede comer el mes entero otra vez.',
-                o: 'Osward + Esteban',
+                t: 'Esta semana',
+                d: 'Inventariar conexiones, activar alertas y acordar límites preventivos.',
               },
               {
-                t: 'No barrer keywords a lo loco',
-                d: 'Listas cortas. Una consulta de 13 mil unidades no es investigar: es un incendio.',
-                o: 'Equipo',
+                t: 'En cada necesidad nueva',
+                d: 'Revisar qué existe y decidir juntos qué conviene guardar en Orbit.',
               },
               {
-                t: 'Preferir Orbit',
-                d: 'El trabajo de clientes vive donde ya guardamos datos en Supabase.',
-                o: 'Equipo',
+                t: 'Cada viernes',
+                d: 'Revisión breve del consumo: qué funcionó, qué se repitió y qué podemos almacenar.',
               },
-              {
-                t: 'Revisar quién tiene chats conectados',
-                d: 'Claude, OpenAI, Codex: quién, para qué, y apagar lo que no se use.',
-                o: 'Esteban',
-              },
-              {
-                t: 'Cerrar el caso Semrush',
-                d: 'Preguntar en Semrush qué pasó esos tres días y quién más tenía la llave.',
-                o: 'Gestión',
-              },
-              {
-                t: 'Cuidar Orbit sin frenarlo',
-                d: 'Avisar si un sync se dispara de más; la preparación de módulos sigue siendo bienvenida.',
-                o: 'Osward',
-              },
-            ].map((a, i) => (
-              <div className="panel stack" key={a.t}>
-                <span className="mono neon" style={{ fontSize: '0.8rem' }}>
-                  0{i + 1}
-                </span>
-                <h3>{a.t}</h3>
-                <p className="lead" style={{ fontSize: '0.92rem' }}>
-                  {a.d}
+            ].map((item) => (
+              <div className="panel stack" key={item.t}>
+                <h3>{item.t}</h3>
+                <p className="lead" style={{ fontSize: '1rem' }}>
+                  {item.d}
                 </p>
-                <span className="chip hot" style={{ width: 'fit-content' }}>
-                  {a.o}
-                </span>
               </div>
             ))}
           </div>
@@ -550,13 +444,16 @@ function buildSlides(data: UsageData, _ahrefs: ApiBlock, logs: AnalyticsData) {
       title: 'Cierre',
       node: (
         <section className="slide">
-          <span className="kicker">Cierre</span>
-          <div style={{ maxWidth: '40rem', display: 'grid', gap: '1.25rem' }}>
+          <span className="kicker">06 · Cierre</span>
+          <h1>
+            Descargar una vez. <span className="neon">Aprovechar entre todos.</span>
+          </h1>
+          <div style={{ maxWidth: '42rem', marginTop: '0.5rem' }}>
             {insightsFor(briefing, 'close').map((i) => (
-              <AgentCard key={i.id} insight={i} />
+                <AgentCard key={i.id} insight={i} />
             ))}
           </div>
-          <div className="hero-meta" style={{ marginTop: '1.5rem' }}>
+          <div className="hero-meta">
             <span>
               Preguntas → <strong>{data.meta.presenter}</strong>
             </span>
