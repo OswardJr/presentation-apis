@@ -71,6 +71,20 @@ const PRESENTER_GUIDES: Record<string, PresenterGuide> = {
       },
     ],
   },
+  governance: {
+    say: '“Para que esto funcione necesitamos una fuente de verdad, excepciones claras y responsabilidades compartidas. La intención es resolver rápido, no crear burocracia.”',
+    tip: 'Recorre las tres columnas sin entrar en detalles técnicos. Confirma al final si el equipo está de acuerdo con los responsables propuestos.',
+    links: [
+      {
+        label: 'Ahrefs · administrar API keys',
+        url: 'https://docs.ahrefs.com/en/api/docs/api-keys-creation-and-management',
+      },
+      {
+        label: 'Ahrefs · consultar límites',
+        url: 'https://docs.ahrefs.com/en/api/reference/subscription-info/get-limits-and-usage',
+      },
+    ],
+  },
   plan: {
     say: '“Propongo empezar pequeño: inventario esta semana, decisión conjunta en cada necesidad y una revisión de diez minutos los viernes.”',
     tip: 'Pregunta: “¿Qué búsqueda repiten hoy y les gustaría ver guardada en Orbit?”',
@@ -523,7 +537,7 @@ function buildSlides(data: UsageData, logs: AnalyticsData) {
                 {[
                   'Antes de buscar, revisar si Orbit ya tiene el dato.',
                   'Si falta información, pedirla para almacenarla y compartirla.',
-                  'Hacer consultas pequeñas y específicas desde los asistentes.',
+                  'Usar MCP y asistentes con consultas pequeñas y específicas.',
                   'Definir límites preventivos por conexión, sin bloquear el trabajo.',
                   'Revisar semanalmente el consumo y aprender de los picos.',
                   'Documentar excepciones o descargas grandes antes de ejecutarlas.',
@@ -540,11 +554,79 @@ function buildSlides(data: UsageData, logs: AnalyticsData) {
       ),
     },
     {
+      id: 'governance',
+      title: 'Gobernanza',
+      node: (
+        <section className="slide">
+          <span className="kicker">05 · Control y responsabilidades</span>
+          <h2>
+            Reglas claras, <span className="neon">sin burocracia</span>
+          </h2>
+          <div className="grid-3">
+            <div className="panel stack">
+              <h3>Fuentes e inventario</h3>
+              <ul className="list">
+                <li>
+                  <span className="n">01</span>
+                  <span>Orbit concentra dashboards, snapshots y registros de consumo.</span>
+                </li>
+                <li>
+                  <span className="n">02</span>
+                  <span>Listado compartido de APIs, cuentas, llaves y responsable de cada una.</span>
+                </li>
+                <li>
+                  <span className="n">03</span>
+                  <span>Ahrefs y Semrush como fuentes oficiales del saldo.</span>
+                </li>
+              </ul>
+            </div>
+            <div className="panel stack">
+              <h3>Excepciones y terceros</h3>
+              <ul className="list">
+                <li>
+                  <span className="n">01</span>
+                  <span>Descargas grandes: solicitud breve en Orbit con objetivo y duración.</span>
+                </li>
+                <li>
+                  <span className="n">02</span>
+                  <span>Autorización propuesta: gestión + seguimiento técnico.</span>
+                </li>
+                <li>
+                  <span className="n">03</span>
+                  <span>Coordinar con Esteban los IDE, MCP y herramientas administradas por terceros.</span>
+                </li>
+              </ul>
+            </div>
+            <div className="panel stack">
+              <h3>Seguimiento y respuesta</h3>
+              <ul className="list">
+                <li>
+                  <span className="n">01</span>
+                  <span>Osward revisa consumo, alertas y oportunidades de reutilización.</span>
+                </li>
+                <li>
+                  <span className="n">02</span>
+                  <span>Alertas preventivas al 50%, 75% y 90% del cupo.</span>
+                </li>
+                <li>
+                  <span className="n">03</span>
+                  <span>Pico sin identificar: revisar registro, aislar conexión, avisar y documentar.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="alert">
+            Propuesta abierta: responsables y autorizaciones se confirman con el equipo y gestión.
+          </div>
+        </section>
+      ),
+    },
+    {
       id: 'plan',
       title: 'Plan conjunto',
       node: (
         <section className="slide">
-          <span className="kicker">05 · Próximos pasos</span>
+          <span className="kicker">06 · Próximos pasos</span>
           <h2>
             Una propuesta <span className="neon-lime">simple</span>
           </h2>
@@ -584,7 +666,7 @@ function buildSlides(data: UsageData, logs: AnalyticsData) {
       title: 'Cierre',
       node: (
         <section className="slide">
-          <span className="kicker">06 · Cierre</span>
+          <span className="kicker">07 · Cierre</span>
           <h1>
             Descargar una vez. <span className="neon">Aprovechar entre todos.</span>
           </h1>
