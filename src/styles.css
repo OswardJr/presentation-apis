@@ -667,66 +667,69 @@ h2 {
   gap: 0.75rem;
 }
 
-.guide-button {
-  border: 1px solid rgba(46, 242, 195, 0.28);
-  border-radius: 9px;
-  padding: 0.32rem 0.62rem;
-  background: rgba(46, 242, 195, 0.08);
-  color: var(--cyan);
-  font-family: var(--mono);
-  font-size: 0.7rem;
+.notes-page {
+  min-height: 100dvh;
+  padding: 2rem clamp(1.25rem, 4vw, 3rem) 3rem;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(46, 242, 195, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(88, 120, 255, 0.1), transparent),
+    var(--bg);
 }
 
-.guide-button:hover {
-  background: rgba(46, 242, 195, 0.15);
-  border-color: rgba(46, 242, 195, 0.5);
+.notes-hero {
+  max-width: 52rem;
+  margin-bottom: 2rem;
 }
 
-.presenter-guide {
-  position: fixed;
-  z-index: 100;
-  top: 3.2rem;
-  right: 1.25rem;
-  width: min(25rem, calc(100vw - 2.5rem));
-  max-height: calc(100dvh - 5.6rem);
-  overflow-y: auto;
-  border: 1px solid rgba(46, 242, 195, 0.3);
-  border-radius: 18px;
-  padding: 1rem;
-  background: rgba(7, 12, 22, 0.97);
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.65),
-    0 0 35px rgba(46, 242, 195, 0.09);
-  backdrop-filter: blur(18px);
-}
-
-.presenter-guide-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 1rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.presenter-guide-head h3 {
-  margin: 0.18rem 0 0;
+.notes-hero h1 {
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
   color: var(--ink);
-  font-size: 1rem;
 }
 
-.presenter-guide-head button {
+.notes-path {
+  margin-top: 1rem;
+  color: var(--dim);
+  font-size: 0.78rem;
+}
+
+.notes-path code {
+  color: var(--cyan);
+}
+
+.notes-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+}
+
+.notes-card {
   border: 1px solid var(--line);
-  border-radius: 8px;
-  width: 1.8rem;
-  height: 1.8rem;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--muted);
-  font-size: 1.15rem;
+  border-radius: 16px;
+  padding: 1.1rem 1.15rem 1.2rem;
+  background: rgba(10, 16, 28, 0.85);
 }
 
-.presenter-guide-kicker,
-.presenter-guide section > span {
+.notes-card-top {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(146, 180, 255, 0.08);
+}
+
+.notes-card-top h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.notes-card section {
+  padding: 0.75rem 0 0;
+}
+
+.notes-card section > span {
   color: var(--cyan);
   font-family: var(--mono);
   font-size: 0.68rem;
@@ -734,13 +737,8 @@ h2 {
   letter-spacing: 0.1em;
 }
 
-.presenter-guide section {
-  padding: 0.9rem 0;
-  border-bottom: 1px solid rgba(146, 180, 255, 0.08);
-}
-
-.presenter-guide section p {
-  margin: 0.45rem 0 0;
+.notes-card section p {
+  margin: 0.4rem 0 0;
   color: var(--muted);
   line-height: 1.5;
   font-size: 0.9rem;
@@ -765,14 +763,6 @@ h2 {
 .presenter-links a:hover {
   color: var(--cyan);
   border-color: rgba(46, 242, 195, 0.35);
-}
-
-.presenter-guide small {
-  display: block;
-  margin-top: 0.8rem;
-  color: var(--dim);
-  font-family: var(--mono);
-  font-size: 0.66rem;
 }
 
 @media (max-width: 960px) {

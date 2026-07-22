@@ -3,109 +3,6 @@ import { buildAgentBriefing, type AgentInsight, type InsightTone } from './agent
 import type { AnalyticsData, LogBucket } from './analyticsTypes';
 import type { UsageData } from './types';
 
-interface PresenterGuide {
-  say: string;
-  tip: string;
-  links: { label: string; url: string }[];
-}
-
-const PRESENTER_GUIDES: Record<string, PresenterGuide> = {
-  title: {
-    say: '“Voy a compartir datos y opciones de mejora. No buscamos responsables; buscamos que la información útil se pueda reutilizar.”',
-    tip: 'Empieza despacio. Explica el orden: datos → Orbit → recomendaciones.',
-    links: [],
-  },
-  summary: {
-    say: '“Semrush nos mostró la necesidad de trazabilidad. Ahrefs nos permitió ver el volumen y comparar dos ciclos.”',
-    tip: 'No entres todavía en usuarios ni herramientas. Quédate en los tres números grandes.',
-    links: [
-      {
-        label: 'Ahrefs · límites y uso',
-        url: 'https://docs.ahrefs.com/en/api/reference/subscription-info/get-limits-and-usage',
-      },
-      {
-        label: 'Semrush · saldo de unidades',
-        url: 'https://developer.semrush.com/api/get-started/api-units-balance/',
-      },
-    ],
-  },
-  data: {
-    say: '“Ambos usos tienen valor: uno responde necesidades puntuales y otro construye módulos compartidos. La mejora está en coordinarlos.”',
-    tip: 'Evita decir “quién gastó”. Habla de canales: asistentes y módulos de Orbit.',
-    links: [
-      {
-        label: 'Cómo Ahrefs calcula unidades',
-        url: 'https://docs.ahrefs.com/en/api/docs/limits-consumption',
-      },
-      {
-        label: 'Precios por créditos Ahrefs',
-        url: 'https://help.ahrefs.com/en/articles/6061657-ahrefs-usage-based-pricing-for-credit-based-plans',
-      },
-    ],
-  },
-  orbit: {
-    say: '“Orbit convierte una descarga inicial en un dato que varias personas pueden consultar. El costo sube al incorporar; luego baja al reutilizar.”',
-    tip: 'Pon un ejemplo real de un módulo: se descarga una vez, se guarda en Supabase y después se consulta desde la interfaz.',
-    links: [
-      {
-        label: 'Ahrefs · cache y costo real',
-        url: 'https://docs.ahrefs.com/en/api/docs/limits-consumption',
-      },
-    ],
-  },
-  recommendations: {
-    say: '“Son opciones de trabajo, no prohibiciones. Si el dato falta, lo pedimos y buscamos dejarlo disponible para todos.”',
-    tip: 'Invita al equipo a proponer qué datos repetitivos deberían convertirse en módulos.',
-    links: [
-      {
-        label: 'Ahrefs MCP · límites por conexión',
-        url: 'https://docs.ahrefs.com/en/mcp/docs/introduction',
-      },
-      {
-        label: 'Ahrefs · administrar API keys',
-        url: 'https://docs.ahrefs.com/en/api/docs/api-keys-creation-and-management',
-      },
-      {
-        label: 'Semrush · ahorrar con display_limit',
-        url: 'https://developer.semrush.com/api/get-started/api-units-balance/',
-      },
-    ],
-  },
-  governance: {
-    say: '“Para que esto funcione necesitamos una fuente de verdad, excepciones claras y responsabilidades compartidas. La intención es resolver rápido, no crear burocracia.”',
-    tip: 'Recorre las tres columnas sin entrar en detalles técnicos. Confirma al final si el equipo está de acuerdo con los responsables propuestos.',
-    links: [
-      {
-        label: 'Ahrefs · administrar API keys',
-        url: 'https://docs.ahrefs.com/en/api/docs/api-keys-creation-and-management',
-      },
-      {
-        label: 'Ahrefs · consultar límites',
-        url: 'https://docs.ahrefs.com/en/api/reference/subscription-info/get-limits-and-usage',
-      },
-    ],
-  },
-  plan: {
-    say: '“Propongo empezar pequeño: inventario esta semana, decisión conjunta en cada necesidad y una revisión de diez minutos los viernes.”',
-    tip: 'Pregunta: “¿Qué búsqueda repiten hoy y les gustaría ver guardada en Orbit?”',
-    links: [
-      {
-        label: 'Semrush · restricciones de uso',
-        url: 'https://developer.semrush.com/api/introduction/api-usage-restrictions/',
-      },
-      {
-        label: 'Ahrefs · guía de API',
-        url: 'https://docs.ahrefs.com/en/api/docs/introduction',
-      },
-    ],
-  },
-  close: {
-    say: '“Descargar una vez y aprovechar entre todos. La propuesta también me incluye a mí: cualquiera puede repetir algo si no sabe que ya existe.”',
-    tip: 'Cierra con una pausa y abre preguntas. No agregues más cifras.',
-    links: [],
-  },
-};
-
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—';
   return n.toLocaleString('es-CO');
@@ -212,7 +109,6 @@ export default function App() {
   const [data, setData] = useState<UsageData | null>(null);
   const [logs, setLogs] = useState<AnalyticsData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -239,16 +135,6 @@ export default function App() {
 
   const nav = useDeckNavigation(slides.length || 1);
   const current = slides[nav.index];
-  const guide = current ? PRESENTER_GUIDES[current.id] : undefined;
-
-  useEffect(() => {
-    const onGuideKey = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() === 'n') setShowGuide((visible) => !visible);
-      if (event.key === 'Escape') setShowGuide(false);
-    };
-    window.addEventListener('keydown', onGuideKey);
-    return () => window.removeEventListener('keydown', onGuideKey);
-  }, []);
 
   if (error) return <div className="error">{error}</div>;
   if (!data || !current) return <div className="loading">Cargando datos de APIs…</div>;
@@ -264,9 +150,6 @@ export default function App() {
           <span>
             {nav.index + 1} / {slides.length} · {current.title}
           </span>
-          <button className="guide-button" onClick={() => setShowGuide((visible) => !visible)}>
-            Apoyo (N)
-          </button>
         </div>
       </header>
 
@@ -274,43 +157,8 @@ export default function App() {
         {current.node}
       </main>
 
-      {showGuide && guide && (
-        <aside className="presenter-guide" aria-label="Apoyo del expositor">
-          <div className="presenter-guide-head">
-            <div>
-              <span className="presenter-guide-kicker">Solo para el expositor</span>
-              <h3>Apoyo · {current.title}</h3>
-            </div>
-            <button onClick={() => setShowGuide(false)} aria-label="Cerrar apoyo">
-              ×
-            </button>
-          </div>
-          <section>
-            <span>Qué decir</span>
-            <p>{guide.say}</p>
-          </section>
-          <section>
-            <span>Tip</span>
-            <p>{guide.tip}</p>
-          </section>
-          {guide.links.length > 0 && (
-            <section>
-              <span>Fuentes rápidas</span>
-              <div className="presenter-links">
-                {guide.links.map((link) => (
-                  <a href={link.url} target="_blank" rel="noreferrer" key={link.url}>
-                    {link.label} ↗
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
-          <small>N para ocultar · Esc para cerrar</small>
-        </aside>
-      )}
-
       <footer className="bottombar">
-        <span className="hint-keys">← → espacio · N apoyo · Home/End</span>
+        <span className="hint-keys">← → espacio · Home/End</span>
         <div className="progress">
           {slides.map((s, i) => (
             <button
